@@ -5,6 +5,8 @@ export const interest = [
     "Machine Learning",
     "Cyber Security",
     "Game Development",
+    "Cyber Security",
+    "Game Development",
     ];
 export const socialMedia = [
     {
