@@ -30,7 +30,7 @@ export default function Interest({ interest }: InterestProps) {
                     key="more"
                     className="py-2 px-4 border-dark-2 border w-fit rounded-full bg-dark text-white"
                   >
-                    {interest.length - 5}+
+                    <p className="text-sm">{interest.length - 5}+</p>
                   </div>
                 )
               )

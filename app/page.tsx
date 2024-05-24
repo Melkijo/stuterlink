@@ -12,8 +12,8 @@ export default function Home() {
   };
   return (
     <main>
-      <div className="max-w-[480px] mx-auto mt-10">
-        <h1 className="text-4xl text-center leading-normal">
+      <div className="max-w-[480px] mx-auto mt-10 px-5">
+        <h1 className="text-3xl text-center leading-normal">
           Make your online appereance more profesional
         </h1>
         <div className="mt-8">
