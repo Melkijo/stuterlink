@@ -11,7 +11,7 @@ type InterestProps = {
   interest: string[];
 };
 
-export default function Interest({ interest }: InterestProps) {
+export default function Interest({ interest }: Readonly<InterestProps>) {
   return (
     <Dialog>
       <DialogTrigger className=" flex gap-2 flex-wrap items-center">
