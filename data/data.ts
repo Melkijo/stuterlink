@@ -182,5 +182,24 @@ export const socialMedia = [
                 school: "University of Lagos",
               
             },
+        ],
+
+        otherLinks: [
+            {
+                image: "https://firebasestorage.googleapis.com/v0/b/beasiswakita-3e322.appspot.com/o/img%2F20220118190946_IMG_8897%201.png?alt=media&token=d9550a4e-cdbf-4300-a38c-366aaeabb85c",
+                title: "Personal Website",
+                url: "https://www.johndoe.com"
+            },
+            {
+                image: "https://firebasestorage.googleapis.com/v0/b/beasiswakita-3e322.appspot.com/o/img%2F20220118190946_IMG_8897%201.png?alt=media&token=d9550a4e-cdbf-4300-a38c-366aaeabb85c",
+
+                title: "Portfolio",
+                url: "https://www.johndoe.com"
+            },
+            {
+                image: "https://firebasestorage.googleapis.com/v0/b/beasiswakita-3e322.appspot.com/o/img%2F20220118190946_IMG_8897%201.png?alt=media&token=d9550a4e-cdbf-4300-a38c-366aaeabb85c",
+                title: "Blog",
+                url: "https://www.johndoe.com"
+            },
         ]
     };

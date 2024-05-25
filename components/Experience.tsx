@@ -15,10 +15,13 @@ export default function Experience({
     <div className="mt-6">
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
-          <small>
-            {experience.startMonth} {experience.startYear} -{" "}
-            {experience.endMonth} {experience.endYear}
-          </small>
+          <div className="flex gap-4 mb-1">
+            <small>
+              {experience.startMonth} {experience.startYear} -{" "}
+              {experience.endMonth} {experience.endYear}
+            </small>
+            <small>{experience.type}</small>
+          </div>
           <AccordionTrigger>
             {experience.position}, {experience.company}
           </AccordionTrigger>

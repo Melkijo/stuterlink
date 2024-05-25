@@ -1,16 +1,45 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+"use client";
+import Link from "next/link";
+
+import { useParams } from "next/navigation";
 
 export default function Navbar() {
+  //get params from url
+  const params = useParams();
+
   return (
-    <Tabs defaultValue="account" className="w-[400px]">
-      <TabsList>
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-      </TabsList>
-      <TabsContent value="account">
-        Make changes to your account here.
-      </TabsContent>
-      <TabsContent value="password">Change your password here.</TabsContent>
-    </Tabs>
+    <div className="bg-dark text-white">
+      <nav className="max-w-[480px] mx-auto  flex items-center  w-full pt-4 px-8 h-14 font-medium ">
+        <ul className="grid grid-cols-2 w-full items-center h-full">
+          <li className="h-full">
+            <Link
+              href={`/${params.username}`}
+              className="flex justify-center w-full items-center flex-col h-full "
+            >
+              <p>Personal</p>
+              {/* {params.username !== "" ? (
+                <div className="w-full h-1 bg-white"></div>
+              ) : (
+                ""
+              )} */}
+              {/* <div className="w-full h-1 bg-white"></div> */}
+            </Link>
+          </li>
+          <li className="h-full">
+            <Link
+              href={`/${params.username}/other`}
+              className="flex justify-center w-full items-center flex-col h-full "
+            >
+              <p>Other</p>
+              {/* {params.username !== "" ? (
+                <div className="w-full h-1 bg-white"></div>
+              ) : (
+                ""
+              )} */}
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
 }

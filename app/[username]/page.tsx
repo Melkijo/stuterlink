@@ -154,7 +154,7 @@ export default function Page() {
                       {dummyAccount.portfolios &&
                       dummyAccount.portfolios.length > 0 ? (
                         dummyAccount.portfolios.map((item, index) => (
-                          <Portfolio key={index} />
+                          <Portfolio key={index} portfolio={item} />
                         ))
                       ) : (
                         <div>No portfolios available.</div>

@@ -44,4 +44,5 @@
     experiences: ExperienceItem[];
     certificates : CertificateItem[];
     education:  EducationItem[];
+    otherLinks: { image:string; title: string; url: string }[];
   }
