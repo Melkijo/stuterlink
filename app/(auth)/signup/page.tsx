@@ -34,12 +34,12 @@ function PageContent() {
   const username = useSearch();
 
   // 1. Define your form.
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     signup({ userData: values }, username);
   }
 
@@ -65,6 +65,7 @@ function PageContent() {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
+                    // name="email"
                     type="email"
                     required
                     placeholder="melkijo@example.com"
@@ -83,6 +84,7 @@ function PageContent() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
+                    // name="password"
                     type="password"
                     required
                     placeholder="****"
