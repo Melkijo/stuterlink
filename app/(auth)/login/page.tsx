@@ -25,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { dummyAccount } from "@/data/data";
 import { useRouter } from "next/navigation";
 import { login } from "./actions";
 
@@ -35,7 +34,6 @@ const formSchema = z.object({
 });
 
 export default function Page() {
-  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,20 +44,7 @@ export default function Page() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
     login({ userData: values });
-
-    // if (
-    //   values.email === dummyAccount.email &&
-    //   values.password === dummyAccount.password
-    // ) {
-    //   alert("Login success");
-    //   router.push(`/${dummyAccount.username}`);
-    // } else {
-    //   alert("Login failed");
-    // }
   }
 
   //   function async googleLogin() {

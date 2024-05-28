@@ -36,36 +36,8 @@ import {
   useSearchParams,
   useSelectedLayoutSegment,
 } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { logout, checkUser, checkLogin } from "./actions";
 import { useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
-
-type Props = {
-  params: { username: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-// export async function generateMetadata(
-//   { params, searchParams }: Props,
-//   parent: ResolvingMetadata
-// ): Promise<Metadata> {
-//   // read route params
-//   const username = params.username;
-
-//   // fetch data
-//   // const product = await fetch(`https://.../${id}`).then((res) => res.json())
-
-//   // // optionally access and extend (rather than replace) parent metadata
-//   // const previousImages = (await parent).openGraph?.images || []
-
-//   return {
-//     title: username + " | Stuterlink",
-//     //   openGraph: {
-//     //     images: ['/some-specific-page-image.jpg', ...previousImages],
-//     //   },
-//   };
-// }
 
 export default function Page() {
   //get url params
@@ -88,7 +60,6 @@ export default function Page() {
       if (email && params.username) {
         const result = await checkUser(email, params.username);
         setUserCheckResult(result);
-        console.log("tes aja", userCheckResult);
       } else {
         setUserCheckResult({
           match: false,
