@@ -70,9 +70,9 @@ export default function Page() {
     verifyUser();
   }, []);
 
-  if (!userCheckResult) {
-    return <div>Loading...</div>;
-  }
+  //   if (!userCheckResult) {
+  //     return <div>Loading...</div>;
+  //   }
 
   return (
     <>
