@@ -1,3 +1,4 @@
+"use client";
 import { interest, socialMedia, dummyAccount } from "@/data/data";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,37 +18,116 @@ import Interest from "@/components/Interest";
 import { CertificateItem, EducationItem, ExperienceItem } from "@/types/types";
 import type { Metadata, ResolvingMetadata } from "next";
 import Navbar from "@/components/Navbar";
+import Editing from "@/components/Editing";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+  useSelectedLayoutSegment,
+} from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { logout, checkUser, checkLogin } from "./actions";
+import { useEffect, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 type Props = {
   params: { username: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
-  const username = params.username;
+// export async function generateMetadata(
+//   { params, searchParams }: Props,
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   // read route params
+//   const username = params.username;
 
-  // fetch data
-  // const product = await fetch(`https://.../${id}`).then((res) => res.json())
+//   // fetch data
+//   // const product = await fetch(`https://.../${id}`).then((res) => res.json())
 
-  // // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || []
+//   // // optionally access and extend (rather than replace) parent metadata
+//   // const previousImages = (await parent).openGraph?.images || []
 
-  return {
-    title: username + " | Stuterlink",
-    //   openGraph: {
-    //     images: ['/some-specific-page-image.jpg', ...previousImages],
-    //   },
-  };
-}
+//   return {
+//     title: username + " | Stuterlink",
+//     //   openGraph: {
+//     //     images: ['/some-specific-page-image.jpg', ...previousImages],
+//     //   },
+//   };
+// }
 
 export default function Page() {
+  //get url params
+  const params = useParams<{ username: string }>();
+
+  //   console.log(params);
+  function handleLogout() {
+    logout();
+  }
+
+  const [userCheckResult, setUserCheckResult] = useState<{
+    match: boolean;
+    user?: any;
+    message?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      const email = await checkLogin();
+      if (email && params.username) {
+        const result = await checkUser(email, params.username);
+        setUserCheckResult(result);
+        console.log("tes aja", userCheckResult);
+      } else {
+        setUserCheckResult({
+          match: false,
+          message: "No authenticated user or username not provided",
+        });
+      }
+    };
+
+    verifyUser();
+  }, []);
+
+  if (!userCheckResult) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <Navbar />
+
+      {userCheckResult && userCheckResult.match === false ? (
+        ""
+      ) : (
+        <>
+          <Sheet>
+            <SheetTrigger>
+              <Button>Edit</Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetDescription>
+                  <Editing />
+                </SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+          <Button onClick={handleLogout}>Logout</Button>
+        </>
+      )}
+
       <div className="max-w-[480px] mx-auto ">
         <div className="w-full  text-dark px-5 py-10">
           {dummyAccount ? (
@@ -58,7 +138,7 @@ export default function Page() {
                   <Image
                     src={dummyAccount.profilePicture}
                     alt="profile picture"
-                    className="w-full h-full object-cover "
+                    className="w-full h-full object-cover"
                     width={200}
                     height={200}
                   />

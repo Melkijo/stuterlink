@@ -10,6 +10,18 @@ export const interest = [
     "Cyber Security",
     "Game Development",
     ];
+
+    export const interestList = [
+        "Web Development",
+        "UI/UX Design",
+        "Mobile Development",
+        "Machine Learning",
+        "Cyber Security",
+        "Game Development",
+        "Cyber Security",
+        "Game Development",
+        ];
+        
 export const socialMedia = [
     {
         type: "Github",
@@ -34,9 +46,12 @@ export const socialMedia = [
     },
     ];
 
+    
+
     export const dummyAccount:AccountData = {
         name: "John Doe",
         email: "melkijonathan2@gmail.com",
+        password: "password",
         username: "johndoe",
         resume: "https://www.resumemaker.online/es.php",
         profilePicture: "https://firebasestorage.googleapis.com/v0/b/beasiswakita-3e322.appspot.com/o/img%2F20220118190946_IMG_8897%201.png?alt=media&token=d9550a4e-cdbf-4300-a38c-366aaeabb85c",
@@ -147,16 +162,21 @@ export const socialMedia = [
                 title: "Certificate 1",
                 yearPublished: "2020",
                 publishedBy: "Google",
+                url: "https://www.johndoe.com"
             },
             {
                 title: "Certificate 2",
                 yearPublished: "2020",
                 publishedBy: "Google",
+                url: "https://www.johndoe.com"
+
             },
             {
                 title: "Certificate 3",
                 yearPublished: "2020",
                 publishedBy: "Google",
+                url: "https://www.johndoe.com"
+
             },
         ],
 

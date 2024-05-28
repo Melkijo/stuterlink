@@ -1,15 +1,23 @@
 "use client";
-
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
 export default function Home() {
   const router = useRouter();
   const [link, setLink] = useState("");
   const handleLink = () => {
-    router.push(`/${link}`);
+    //push to signup page and send the link as a query
+    //check if the link is empty
+    if (link === "") return;
+
+    router.push(`/signup?username=${link}`);
+    // router.push();
   };
+
   return (
     <main>
       <div className="max-w-[480px] mx-auto mt-10 px-5">
@@ -26,6 +34,12 @@ export default function Home() {
             />
             <Button onClick={handleLink}>Get it</Button>
           </div>
+          <p>
+            have an account?{" "}
+            <Button variant="link" size="none" className="text-blue-500">
+              <Link href="/login">Login</Link>
+            </Button>
+          </p>
         </div>
       </div>
     </main>

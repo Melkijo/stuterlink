@@ -20,6 +20,7 @@
     title: string;
     yearPublished: string;
     publishedBy: string;
+    url: string;
   }
 
  export  interface EducationItem {
@@ -32,6 +33,7 @@
  export  interface AccountData {
     name: string;
     email: string;
+    password: string;
     username: string;
     resume: string;
     profilePicture: string;

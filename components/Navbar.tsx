@@ -8,8 +8,8 @@ export default function Navbar() {
   const params = useParams();
 
   return (
-    <div className="bg-dark text-white">
-      <nav className="max-w-[480px] mx-auto  flex items-center  w-full pt-4 px-8 h-14 font-medium ">
+    <div className="relative z-10 bg-dark text-white">
+      <nav className="max-w-[480px] mx-auto  flex items-center  w-full pt-4 px-8 pb-2 h-14 font-medium ">
         <ul className="grid grid-cols-2 w-full items-center h-full">
           <li className="h-full">
             <Link
