@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { signup } from "./actions";
+import { Suspense } from "react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -40,14 +41,16 @@ export default function Page() {
   }
   return (
     <div className="max-w-[480px] mx-auto mt-20">
-      <p className="mb-4">
-        <span
-        // className="py-2 px-3 bg-green-500 rounded-lg font-medium"
-        >
-          stuterlink.me/{username}
-        </span>{" "}
-        is ready!
-      </p>
+      <Suspense fallback={<div>Loading...</div>}>
+        <p className="mb-4">
+          <span
+          // className="py-2 px-3 bg-green-500 rounded-lg font-medium"
+          >
+            stuterlink.me/{username}
+          </span>{" "}
+          is ready!
+        </p>
+      </Suspense>
       <h1 className="text-3xl font-bold text-left mb-8">
         Create your account now
       </h1>
