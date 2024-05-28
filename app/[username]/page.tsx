@@ -43,7 +43,6 @@ export default function Page() {
   //get url params
   const params = useParams<{ username: string }>();
 
-  //   console.log(params);
   function handleLogout() {
     logout();
   }

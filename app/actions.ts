@@ -1,7 +1,6 @@
 'use server'
  
 import { createClient } from '@/utils/supabase/server'
-import { revalidateTag } from 'next/cache'
  
 export async function actions() {
   const supabase = createClient()
