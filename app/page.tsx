@@ -28,8 +28,6 @@ export default function Home() {
   }, []);
 
   console.log(actionData);
-
-  if (!actionData) return <div>Loading...</div>;
   return (
     <main>
       <div className="max-w-[480px] mx-auto mt-10 px-5">
