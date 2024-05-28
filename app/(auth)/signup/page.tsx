@@ -24,10 +24,15 @@ const formSchema = z.object({
   password: z.string().min(8),
 });
 
-export default function Page() {
+function useSearch() {
   const searchParams = useSearchParams();
-
   const username = searchParams.get("username") || "username";
+  return username;
+}
+
+export default function Page() {
+  const username = useSearch();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
