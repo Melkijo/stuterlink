@@ -19,12 +19,15 @@ import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/server";
 
 async function getUser(username: string) {
-  const response = await fetch(`http://localhost:3000/api/${username}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await fetch(
+    `https://stuterlink.vercel.app/api/${username}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   const data = await response.json();
   return data;
 }
