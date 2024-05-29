@@ -1,4 +1,3 @@
-"use client";
 import { interest, socialMedia, dummyAccount } from "@/data/data";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,86 +15,44 @@ import Education from "@/components/Education";
 import Certificate from "@/components/Certificate";
 import Interest from "@/components/Interest";
 import { CertificateItem, EducationItem, ExperienceItem } from "@/types/types";
-import type { Metadata, ResolvingMetadata } from "next";
 import Navbar from "@/components/Navbar";
-import Editing from "@/components/Editing";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
-import {
-  redirect,
-  useParams,
-  useRouter,
-  useSearchParams,
-  useSelectedLayoutSegment,
-} from "next/navigation";
-import { logout, checkUser, checkLogin } from "./actions";
-import { useEffect, useState } from "react";
 
-export default function Page() {
-  //get url params
-  const params = useParams<{ username: string }>();
+async function getUser(username: string) {
+  const response = await fetch(`http://localhost:3000/api/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await response.json();
+  return data;
+}
 
-  function handleLogout() {
-    logout();
+export default async function Page({ params }: any) {
+  const supabase = createClient(); // Assuming you have supabase configured
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const username: string = params.username;
+  const userData = await getUser(username);
+
+  console.log(userData.account_data[0]);
+
+  if (!userData.account_data[0]) {
+    return <h1>No User found</h1>;
   }
-
-  const [userCheckResult, setUserCheckResult] = useState<{
-    match: boolean;
-    user?: any;
-    message?: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      const email = await checkLogin();
-      if (email && params.username) {
-        const result = await checkUser(email, params.username);
-        setUserCheckResult(result);
-      } else {
-        setUserCheckResult({
-          match: false,
-          message: "No authenticated user or username not provided",
-        });
-      }
-    };
-
-    verifyUser();
-  }, []);
-
-  //   if (!userCheckResult) {
-  //     return <div>Loading...</div>;
-  //   }
-
   return (
     <>
       <Navbar />
+      {/* <UsernameButton /> */}
 
-      {userCheckResult && userCheckResult.match === false ? (
-        ""
+      {user && user.email === userData.account_data[0].email ? (
+        <h1>Hai</h1>
       ) : (
-        <>
-          <Sheet>
-            <SheetTrigger>
-              <Button>Edit</Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetDescription>
-                  <Editing />
-                </SheetDescription>
-              </SheetHeader>
-            </SheetContent>
-          </Sheet>
-          <Button onClick={handleLogout}>Logout</Button>
-        </>
+        <h1>Not authorized</h1>
       )}
 
       <div className="max-w-[480px] mx-auto ">
@@ -115,7 +72,8 @@ export default function Page() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <Link
-                    href="/profile"
+                    href={`mailto:${userData.account_data[0].email}`}
+                    target="_blank"
                     className="px-7 py-3 rounded-full bg-dark text-light font-medium"
                   >
                     Contact Me
@@ -130,12 +88,17 @@ export default function Page() {
               </div>
               {/* user detail */}
               <div className="mt-3">
-                <h1 className="text-xl font-bold">{dummyAccount.name}</h1>
+                <h1 className="text-xl font-bold">
+                  {userData.account_data[0].name}
+                </h1>
                 <div className="flex flex-wrap gap-4">
-                  <p>@{dummyAccount.username}</p>
-                  <p>{dummyAccount.pronouns}</p>
+                  <p>@{userData.account_data[0].username}</p>
+                  <p>{userData.account_data[0].occupation}</p>
+
+                  <p>{userData.account_data[0].pronouns}</p>
                   <p>
-                    {dummyAccount.city},{dummyAccount.country}
+                    {userData.account_data[0].city}, {""}
+                    {userData.account_data[0].country}
                   </p>
                 </div>
               </div>

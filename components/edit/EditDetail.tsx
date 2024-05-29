@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,25 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { interestList } from "@/data/data";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { editIcon, trashIcon } from "@/components/icons";
+import { createClient } from "@/utils/supabase/server";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "name must be at least 2 characters.",
   }),
-  profileImage: z.string().optional(),
+  occupation: z.string().optional(),
+  profilePicture: z.instanceof(FileList).optional(),
   resume: z.string().optional(),
   pronouns: z.string(),
   city: z.string(),
@@ -50,12 +39,34 @@ export default function EditDetail() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      profileImage: "",
+      resume: "",
+      occupation: "",
     },
   });
+
+  //   const supabase = createClient();
+
+  //   const uploadFile = async (event: any) => {
+  //     const file = event.target.files[0];
+  //     const bucket = "stuterlink";
+
+  //     // Call Storage API to upload file
+  //     const { data, error } = await supabase.storage
+  //       .from(bucket)
+  //       .upload(file.name, file);
+
+  //     // Handle error if upload failed
+  //     if (error) {
+  //       alert("Error uploading file.");
+  //       return;
+  //     }
+
+  //     alert("File uploaded successfully!");
+  //   };
+
+  const fileRef = form.register("profilePicture");
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
   }
   return (
@@ -75,16 +86,48 @@ export default function EditDetail() {
         />
         <FormField
           control={form.control}
-          name="profileImage"
+          name="occupation"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Occupation</FormLabel>
+              <FormControl>
+                <Input placeholder="student, freelance..." {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="profilePicture"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Profile Image</FormLabel>
               <FormControl>
-                <Input type="file" {...field} />
+                <Input type="file" placeholder="shadcn" {...fileRef} />
               </FormControl>
               {/* <FormDescription>
-                    This is your public display name.
-                  </FormDescription> */}
+                            This is your public display name.
+                        </FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="profilePicture"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profile Image test</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  placeholder="shadcn"
+                  // onChange={uploadFile}
+                />
+              </FormControl>
+              {/* <FormDescription>
+                            This is your public display name.
+                        </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}

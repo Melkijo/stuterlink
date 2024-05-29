@@ -1,7 +1,6 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-
 import { createClient } from '@/utils/supabase/server'
 
 
@@ -50,9 +49,6 @@ else{
 // }
 export async function checkLogin() {
     const supabase = createClient();
-  
-    
-
     const { data: { user }, error } = await supabase.auth.getUser()
   
     if (error) {
@@ -73,7 +69,7 @@ export async function checkLogin() {
     const supabase = createClient();
   
     const { data, error } = await supabase
-      .from('users')
+      .from('account_data')
       .select()
       .eq('email', email);
   
@@ -96,4 +92,42 @@ export async function checkLogin() {
       console.log("No matching user found");
       return { match: false, message: "No user found with the given email" };
     }
+  }
+
+  type UserDetail = {
+    email?: string;
+    name?: string;
+    occupation?: string;
+    profilePicture?: FileList;
+    resume?: string;
+    pronouns?: string;
+    city?: string;
+    country?: string;
+
+  };
+
+ 
+    
+
+  export async function editDetail(userDetail : UserDetail){
+    // const supabase = createClient();
+    // console.log(userDetail)
+    // if(userDetail.profilePicture !== undefined){
+    //     console.log(userDetail.profilePicture)
+    //     await uploadProfilePicture(userDetail.profilePicture[0])     
+    // }
+        // const {  error } = await supabase
+        // .from('account_data')
+        // .update(userDetail)
+        // .eq('email', email);
+        // if (error) {
+        //   console.error("Error updating user data:", error);
+        //   return { success: false, message: "Error updating user data" };
+        // } else {
+        //   console.log("User data updated successfully");
+        //   return { success: false, message: "No user found with the given email" };
+        // }
+   
+
+   
   }

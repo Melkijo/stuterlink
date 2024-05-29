@@ -21,7 +21,7 @@ export async function login({userData}: {userData: {email: string, password: str
   }
   else{
     const { data, error } = await supabase
-  .from('users')
+  .from('account_data')
   .select()
   .eq('email', userData.email)
 
