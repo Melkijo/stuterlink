@@ -170,9 +170,7 @@ export default async function Page({ params }: any) {
 
       {user && user.email === userData.email ? (
         <UsernameButton data={userData} />
-      ) : (
-        <h1>Not authorized</h1>
-      )}
+      ) : null}
 
       <div className="max-w-[480px] mx-auto ">
         <div className="w-full  text-dark px-5 py-10">

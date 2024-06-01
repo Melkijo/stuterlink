@@ -5,12 +5,13 @@ export default function Portfolio({ portfolio }: { portfolio: PortfolioItem }) {
   return (
     <Link href={portfolio.url} target="_blank">
       <div className=" pr-4 border border-gray hover:border-black flex gap-4 items-center rounded-xl overflow-hidden h-[160px]">
-        <div className="w-[200px] h-full">
+        <div className="w-[200px] h-full overflow-hidden">
           <Image
             src={portfolio.image}
-            alt="profile picture"
+            alt="portfolio image"
             width={200}
             height={200}
+            quality={75}
             className="object-cover w-full h-full"
           />
         </div>

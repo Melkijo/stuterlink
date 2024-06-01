@@ -55,7 +55,7 @@ async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
     //upload image to storage
     const { data, error } = await supabase.storage
       .from("stuterlink")
-      .upload(`profilePicture/${image.name}`, image, {
+      .upload(`portfolio/${image.name}`, image, {
         cacheControl: "3600",
         upsert: false,
       });
@@ -66,7 +66,7 @@ async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
     //get image link
     const { data: imageLink } = supabase.storage
       .from("stuterlink")
-      .getPublicUrl(`profilePicture/${image.name}`);
+      .getPublicUrl(`portfolio/${image.name}`);
 
     if (!imageLink.publicUrl) return console.log("error upload image");
 
