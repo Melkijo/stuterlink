@@ -40,7 +40,11 @@ const formSchema = z.object({
   yearPublished: z.number().int(),
   publishedBy: z.string(),
 });
-export default function EditCertificate() {
+export default function EditCertificate({
+  certificateList,
+}: {
+  certificateList: any[];
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     // defaultValues: {
@@ -54,6 +58,7 @@ export default function EditCertificate() {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+  const certificates = certificateList;
   return (
     <>
       <Dialog>

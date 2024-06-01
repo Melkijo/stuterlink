@@ -16,7 +16,7 @@ export async function signup({userData}: {userData: {email: string, password: st
     console.log("error signup")
   }
 else{
-    const {error}= await supabase.from('account_data').insert({email: userData.email, username: username})
+    const {error}= await supabase.from('user_data').insert({email: userData.email, username: username})
     if(error){
         // alert('error store data')
         console.log(error)

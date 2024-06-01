@@ -47,16 +47,6 @@ export default function Page() {
     login({ userData: values });
   }
 
-  //   function async googleLogin() {
-  //     // do somethinga
-  //     await supabase.auth.signInWithOAuth({
-  //         provider: 'google',
-  //         options: {
-  //           redirectTo: `/callback`,
-  //         },
-  //       })
-  //   }
-
   return (
     <div className="max-w-[480px] mx-auto mt-20">
       <h1 className="text-3xl font-bold text-center mb-8">Login</h1>

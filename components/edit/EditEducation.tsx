@@ -45,7 +45,11 @@ const formSchema = z.object({
   endYear: z.number().int(),
 });
 
-export default function EditEducation() {
+export default function EditEducation({
+  educationList,
+}: {
+  educationList: any[];
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     // defaultValues: {
@@ -59,6 +63,8 @@ export default function EditEducation() {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+  const education = educationList;
+
   return (
     <>
       <Dialog>

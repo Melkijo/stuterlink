@@ -14,52 +14,95 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { interestList } from "@/data/data";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { editIcon, trashIcon } from "@/components/icons";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
-  linkedin: z.string().url(),
-  github: z.string().url(),
-  twitter: z.string().url(),
-  instagram: z.string().url(),
-  facebook: z.string().url(),
-  youtube: z.string().url(),
-  tiktok: z.string().url(),
+  user_id: z.number(),
+  linkedin: z.string().optional(),
+  github: z.string().optional(),
+  x: z.string().optional(),
+  instagram: z.string().optional(),
+  facebook: z.string().optional(),
+  youtube: z.string().optional(),
+  tiktok: z.string().optional(),
 });
-export default function EditSocialMedia() {
+
+async function updateSocialMedia(
+  values: z.infer<typeof formSchema>,
+  userId: any
+) {
+  const client = createClient();
+  const { data, error } = await client
+    .from("user_data")
+    .update(values)
+    .eq("id", userId)
+    .select();
+  if (error) {
+    console.error(error);
+    return;
+  }
+  console.log(data);
+}
+
+async function addSocialMedia(values: z.infer<typeof formSchema>, userId: any) {
+  const client = createClient();
+  const { data, error } = await client.from("social_media").insert(values);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+  console.log(data);
+}
+
+interface EditSocialMediaProps {
+  socialMediaList: any; // Replace with your actual social media object type
+  userId: any; // Assuming userId is a number, adjust if it's a different type
+}
+
+export default function EditSocialMedia(props: EditSocialMediaProps) {
+  const socialMedia = props.socialMediaList;
+  //   console.log(socialMedia);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // defaultValues: {
-    //   name: "",
-    //   profileImage: "",
-    // },
+    defaultValues: {
+      user_id: props.userId,
+      linkedin: socialMedia[0].linkedin || "",
+      github: socialMedia[0].github || "",
+      x: socialMedia[0].x || "",
+      instagram: socialMedia[0].instagram || "",
+      facebook: socialMedia[0].facebook || "",
+      youtube: socialMedia[0].youtube || "",
+      tiktok: socialMedia[0].tiktok || "",
+    },
   });
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    if (socialMedia.length === 0) {
+      addSocialMedia(values, props.userId);
+    } else {
+      updateSocialMedia(values, props.userId);
+    }
     console.log(values);
   }
+  //   console.log(socialMedia);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="user_id"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input {...field} className="hidden" />
+              </FormControl>
+              {/* <FormMessage /> */}
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="linkedin"
@@ -67,8 +110,9 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Linkedin</FormLabel>
               <FormControl>
-                <Input placeholder="https://linkedin.com/..." {...field} />
+                <Input placeholder="linkedin.com/..." {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -79,21 +123,39 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Github</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input
+                  placeholder="github.com/..."
+                  {...field}
+                  //   value={
+                  //     socialMedia.find(
+                  //       (item: socialMediaType) => item.type === "github"
+                  //     )?.url
+                  //   }
+                />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
 
         <FormField
           control={form.control}
-          name="twitter"
+          name="x"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Twitter</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input
+                  placeholder="x.com/..."
+                  {...field}
+                  //   value={
+                  //     socialMedia.find(
+                  //       (item: socialMediaType) => item.type === "x"
+                  //     )?.url
+                  //   }
+                />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -104,8 +166,9 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Instagram</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder="instagram.com/..." {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -116,8 +179,9 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Facebook</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder="facebook.com/..." {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -128,8 +192,9 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Youtube</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder="youtube.com/..." {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -140,8 +205,9 @@ export default function EditSocialMedia() {
             <FormItem>
               <FormLabel>Tiktok</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder="tiktok.com/..." {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

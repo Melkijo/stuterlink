@@ -10,7 +10,8 @@ import EditEducation from "./edit/EditEducation";
 import EditSocialMedia from "./edit/EditSocialMedia";
 import EditOther from "./edit/EditOther";
 
-export default function Editing() {
+export default function Editing({ data }: { data: any }) {
+  console.log(data);
   return (
     <div className="relative z-20 ">
       <div
@@ -32,28 +33,31 @@ export default function Editing() {
           </TabsList>
           <div className="mt-6 px-4">
             <TabsContent value="detail">
-              <EditDetail />
+              <EditDetail data={data} />
             </TabsContent>
             <TabsContent value="socialMedia">
-              <EditSocialMedia />
+              <EditSocialMedia
+                socialMediaList={data.socialMedia}
+                userId={data.id}
+              />
             </TabsContent>
             <TabsContent value="interest">
-              <EditInterest />
+              <EditInterest interestList={data.interests} userId={data.id} />
             </TabsContent>
             <TabsContent value="portfolio">
-              <EditPortfolio />
+              <EditPortfolio portfolioList={data.portfolios} userId={data.id} />
             </TabsContent>
             <TabsContent value="experience">
-              <EditExperience />
+              <EditExperience experienceList={data.experiences} />
             </TabsContent>
             <TabsContent value="certificate">
-              <EditCertificate />
+              <EditCertificate certificateList={data.certificates} />
             </TabsContent>
             <TabsContent value="education">
-              <EditEducation />
+              <EditEducation educationList={data.education} />
             </TabsContent>
             <TabsContent value="other">
-              <EditOther />
+              <EditOther otherLinkList={data.otherLink} />
             </TabsContent>
           </div>
         </Tabs>

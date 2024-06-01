@@ -3,8 +3,8 @@ import Link from "next/link";
 import { PortfolioItem } from "@/types/types";
 export default function Portfolio({ portfolio }: { portfolio: PortfolioItem }) {
   return (
-    <Link href={portfolio.url}>
-      <div className=" pr-4 border border-gray flex gap-4 items-center rounded-xl overflow-hidden h-[160px]">
+    <Link href={portfolio.url} target="_blank">
+      <div className=" pr-4 border border-gray hover:border-black flex gap-4 items-center rounded-xl overflow-hidden h-[160px]">
         <div className="w-[200px] h-full">
           <Image
             src={portfolio.image}

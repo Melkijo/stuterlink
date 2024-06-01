@@ -8,6 +8,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/v0/b/**',
             },
+            {
+                protocol: 'https',
+                hostname: "dufkorayqhkwairjodcm.supabase.co",
+                port: '',
+                pathname: '/storage/v1/object/public/stuterlink/**'
+            }
         ],
     },
 };

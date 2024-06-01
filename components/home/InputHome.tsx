@@ -13,7 +13,7 @@ const fetchUsername = async (
   try {
     const supabase = createClient(); // Assuming you have supabase configured
     const { data: account_data, error } = await supabase
-      .from("account_data")
+      .from("user_data")
       .select("username")
       .eq("username", usernameInput);
 

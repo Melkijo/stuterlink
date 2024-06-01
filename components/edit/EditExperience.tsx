@@ -32,6 +32,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { editIcon, trashIcon } from "@/components/icons";
+import { month } from "@/data/month";
+import { Checkbox } from "../ui/checkbox";
+import { useState } from "react";
+
 const formSchema = z.object({
   position: z.string().min(2, {
     message: "name must be at least 2 characters.",
@@ -41,14 +45,32 @@ const formSchema = z.object({
   }),
   type: z.string(),
   description: z.string(),
+  start_month: z.string(),
+  start_year: z.string(),
+  end_month: z.string().optional(),
+  end_year: z.string().optional(),
+  working_here: z.boolean(),
 });
-export default function EditExperience() {
+
+export default function EditExperience({
+  experienceList,
+}: {
+  experienceList: any[];
+}) {
+  const [workingStatus, setWorkingStatus] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // defaultValues: {
-    //   name: "",
-    //   profileImage: "",
-    // },
+    defaultValues: {
+      position: "",
+      company: "",
+      type: "",
+      description: "",
+      start_month: "",
+      start_year: "",
+      end_month: "",
+      end_year: "",
+      working_here: false,
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -140,6 +162,124 @@ export default function EditExperience() {
                               </SelectItem>
                             </SelectContent>
                           </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="start_month"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Start month</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Choose" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {month.map((item: string, index) => (
+                                <SelectItem key={index} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="start_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Start year</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="20xx"
+                              {...field}
+                              type="number"
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="working_here"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            onClick={() => {
+                              setWorkingStatus(!workingStatus);
+                            }}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>I currently working here</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="end_month"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>End month</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger disabled={workingStatus}>
+                                <SelectValue placeholder="Choose" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {month.map((item: string, index) => (
+                                <SelectItem key={index} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="end_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>End year</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="20xx"
+                              {...field}
+                              type="number"
+                              disabled={workingStatus}
+                            />
+                          </FormControl>
 
                           <FormMessage />
                         </FormItem>

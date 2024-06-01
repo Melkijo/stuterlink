@@ -43,7 +43,7 @@ const formSchema = z.object({
   url: z.string().optional(),
   description: z.string(),
 });
-export default function EditOther() {
+export default function EditOther({ otherLinkList }: { otherLinkList: any[] }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     // defaultValues: {
@@ -56,6 +56,7 @@ export default function EditOther() {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+  const otherLink = otherLinkList;
   return (
     <>
       <Dialog>

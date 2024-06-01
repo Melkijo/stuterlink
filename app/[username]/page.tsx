@@ -1,13 +1,7 @@
 import { interest, socialMedia, dummyAccount } from "@/data/data";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  githubIcon,
-  linkedinIcon,
-  tiktokIcon,
-  twitterIcon,
-  instagramIcon,
-} from "@/components/icons";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Portfolio from "@/components/Portfolio";
 import Experience from "@/components/Experience";
@@ -17,19 +11,114 @@ import Interest from "@/components/Interest";
 import { CertificateItem, EducationItem, ExperienceItem } from "@/types/types";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/server";
+import SocialMedia from "@/components/SocialMedia";
+import UsernameButton from "@/components/username/UsernameButton";
 
-async function getUser(username: string) {
-  const response = await fetch(
-    `https://stuterlink.vercel.app/api/${username}`,
-    {
+async function getUserDetail(username: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/${username}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const data = await response.json();
-  return data;
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("cant fetching data: ", error);
+  }
+}
+
+async function getUserSocialMedia(userId: string) {
+  const supabase = createClient(); // Assuming you have supabase configured
+
+  const { data: response, error } = await supabase
+    .from("social_media")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching social media:", error);
+    return null;
+  }
+
+  return response;
+}
+
+async function getUserPortfolio(userId: string) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("portfolios")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
+}
+
+async function getUserCertificates(userId: string) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("certificates")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
+}
+
+async function getUserEducation(userId: string) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("education")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
+}
+async function getUserExperiences(userId: string) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("experiences")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
+}
+
+async function getUserOtherLink(userId: string) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("other_link")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
 }
 
 export default async function Page({ params }: any) {
@@ -39,34 +128,59 @@ export default async function Page({ params }: any) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const username: string = params.username;
-  const userData = await getUser(username);
+  const userDetail = await getUserDetail(params.username);
 
-  console.log(userData.account_data[0]);
-
-  if (!userData.account_data[0]) {
+  if (!userDetail.account_data[0]) {
     return <h1>No User found</h1>;
   }
+
+  console.log(userDetail.account_data[0]);
+  const userSocialMedia = await getUserSocialMedia(
+    userDetail.account_data[0].id
+  );
+  const userPortfolio = await getUserPortfolio(userDetail.account_data[0].id);
+  const userCertificates = await getUserCertificates(
+    userDetail.account_data[0].id
+  );
+  const userEducation = await getUserEducation(userDetail.account_data[0].id);
+  const userExperiences = await getUserExperiences(
+    userDetail.account_data[0].id
+  );
+  const userOtherLink = await getUserOtherLink(userDetail.account_data[0].id);
+
+  //store all the data in one object
+  const userData = {
+    ...userDetail.account_data[0],
+    socialMedia: userSocialMedia,
+    portfolios: userPortfolio,
+    certificates: userCertificates,
+    education: userEducation,
+    experiences: userExperiences,
+    otherLink: userOtherLink,
+  };
+
+  //   console.log(userData);
+
   return (
     <>
       <Navbar />
       {/* <UsernameButton /> */}
 
-      {user && user.email === userData.account_data[0].email ? (
-        <h1>Hai</h1>
+      {user && user.email === userData.email ? (
+        <UsernameButton data={userData} />
       ) : (
         <h1>Not authorized</h1>
       )}
 
       <div className="max-w-[480px] mx-auto ">
         <div className="w-full  text-dark px-5 py-10">
-          {dummyAccount ? (
+          {userDetail.account_data[0] ? (
             <>
               {/* header */}
               <div className="flex justify-between items-center ">
                 <div className="w-32 h-32 overflow-hidden rounded-full">
                   <Image
-                    src={dummyAccount.profilePicture}
+                    src={userDetail.account_data[0].profile_picture}
                     alt="profile picture"
                     className="w-full h-full object-cover"
                     width={200}
@@ -75,14 +189,15 @@ export default async function Page({ params }: any) {
                 </div>
                 <div className="flex flex-col gap-2">
                   <Link
-                    href={`mailto:${userData.account_data[0].email}`}
+                    href={`mailto:${userDetail.account_data[0].email}`}
                     target="_blank"
                     className="px-7 py-3 rounded-full bg-dark text-light font-medium"
                   >
                     Contact Me
                   </Link>
                   <Link
-                    href="/profile"
+                    href={userDetail.account_data[0].resume}
+                    target="_blank"
                     className="px-7 py-3 rounded-full border border-dark font-medium"
                   >
                     My Resume
@@ -92,68 +207,28 @@ export default async function Page({ params }: any) {
               {/* user detail */}
               <div className="mt-3">
                 <h1 className="text-xl font-bold">
-                  {userData.account_data[0].name}
+                  {userDetail.account_data[0].name}
                 </h1>
                 <div className="flex flex-wrap gap-4">
-                  <p>@{userData.account_data[0].username}</p>
-                  <p>{userData.account_data[0].occupation}</p>
+                  <p>@{userDetail.account_data[0].username}</p>
+                  <p>{userDetail.account_data[0].occupation}</p>
 
-                  <p>{userData.account_data[0].pronouns}</p>
+                  <p>{userDetail.account_data[0].pronouns}</p>
                   <p>
-                    {userData.account_data[0].city}, {""}
-                    {userData.account_data[0].country}
+                    {userDetail.account_data[0].city}, {""}
+                    {userDetail.account_data[0].country}
                   </p>
                 </div>
               </div>
 
               {/* Interest */}
               <div className="mt-4">
-                <Interest interest={dummyAccount.interests} />
+                <Interest interest={userDetail.account_data[0].interests} />
               </div>
 
               {/* Social Media */}
               <div className="flex gap-2 mt-4 ">
-                {dummyAccount.socialMedia
-                  ? socialMedia.map((item, index) => (
-                      <div key={index}>
-                        {item.type === "Github" && (
-                          <Link href={item.url} target="_blank">
-                            <div className="w-10 h-10 flex justify-center items-center rounded-md  bg-[#24292E]">
-                              {githubIcon}
-                            </div>
-                          </Link>
-                        )}
-                        {item.type === "Twitter" && (
-                          <div className="w-10 h-10 flex justify-center items-center rounded-md  bg-[#0F1419]">
-                            <Link href={item.url} target="_blank">
-                              {twitterIcon}
-                            </Link>
-                          </div>
-                        )}
-                        {item.type === "LinkedIn" && (
-                          <div className="w-10 h-10 flex justify-center items-center rounded-md  bg-[#0077B5]">
-                            <Link href={item.url} target="_blank">
-                              {linkedinIcon}
-                            </Link>
-                          </div>
-                        )}
-                        {item.type === "Instagram" && (
-                          <div className="w-10 h-10 flex justify-center items-center rounded-md  bg-[#D62976]">
-                            <Link href={item.url} target="_blank">
-                              {instagramIcon}
-                            </Link>
-                          </div>
-                        )}
-                        {item.type === "Tiktok" && (
-                          <div className="w-10 h-10 flex justify-center items-center rounded-md  bg-[#000000]">
-                            <Link href={item.url} target="_blank">
-                              {tiktokIcon}
-                            </Link>
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  : null}
+                <SocialMedia userId={userDetail.account_data[0].id} />
               </div>
 
               {/* tabs */}
@@ -167,9 +242,8 @@ export default async function Page({ params }: any) {
                 <div className="mt-6">
                   <TabsContent value="portfolio">
                     <div className="flex flex-col gap-2">
-                      {dummyAccount.portfolios &&
-                      dummyAccount.portfolios.length > 0 ? (
-                        dummyAccount.portfolios.map((item, index) => (
+                      {userPortfolio && userPortfolio.length > 0 ? (
+                        userPortfolio.map((item, index) => (
                           <Portfolio key={index} portfolio={item} />
                         ))
                       ) : (
