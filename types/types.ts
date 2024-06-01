@@ -45,7 +45,7 @@
     interests: string[];
     socialMedia: { type: string; url: string }[];
     portfolios: PortfolioItem[];
-    experiences: ExperienceItem[];
+    // experiences: ExperienceItem[];
     certificates : CertificateItem[];
     education:  EducationItem[];
     otherLinks: { image:string; title: string; url: string }[];

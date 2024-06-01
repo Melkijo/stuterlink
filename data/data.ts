@@ -111,51 +111,6 @@ export const socialMedia = [
             url: "https://github.com"
         },
         ],
-
-        experiences: [
-        {
-            startMonth: "Jan",
-            startYear: "2020",
-            endMonth: "Dec",
-            endYear: "2020",
-            position: "Software Developer",
-            company: "Google",
-            type: "Full-time",
-            description: "This is a job description"
-        },
-
-        //create another 3
-        {
-            startMonth: "Jan",
-            startYear: "2020",
-            endMonth: "Dec",
-            endYear: "2020",
-            position: "Software Developer",
-            company: "Google",
-            type: "Full-time",
-            description: "This is a job description"
-        },
-        {
-            startMonth: "Jan",
-            startYear: "2020",
-            endMonth: "Dec",
-            endYear: "2020",
-            position: "Software Developer",
-            company: "Google",
-            type: "Full-time",
-            description: "This is a job description"
-        },
-        {
-            startMonth: "Jan",
-            startYear: "2020",
-            endMonth: "Dec",
-            endYear: "2020",
-            position: "Software Developer",
-            company: "Google",
-            type: "Full-time",
-            description: "This is a job description"
-        },
-        ],
         
         certificates : [
             {
