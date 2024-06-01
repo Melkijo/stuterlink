@@ -72,7 +72,6 @@ async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
 
     //add new object data in values
     values.image = imageLink.publicUrl;
-    console.log(values);
 
     const { data: newPortfolio, error: errorInsert } = await supabase
       .from("portfolios")
@@ -150,8 +149,6 @@ async function editPortfolio(
       values.image = imageLink.publicUrl;
   }
 
-  console.log(values);
-
   const { data: updatedData, error: updateError } = await supabase
     .from("portfolios")
     .update(values)
@@ -221,9 +218,7 @@ export default function EditPortfolio({
   }
 
   function handleEdit(values: z.infer<typeof formSchema>) {
-    console.log(editId);
     if (!values.image) values.image = imageEdit;
-    console.log(values);
     if (image) {
       editPortfolio(editId, values, image);
     } else {

@@ -48,7 +48,7 @@ export default function Editing({ data }: { data: any }) {
               <EditPortfolio portfolioList={data.portfolios} userId={data.id} />
             </TabsContent>
             <TabsContent value="experience">
-              <EditExperience experienceList={data.experiences} />
+              <EditExperience userId={data.id} />
             </TabsContent>
             <TabsContent value="certificate">
               <EditCertificate certificateList={data.certificates} />

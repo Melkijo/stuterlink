@@ -222,10 +222,14 @@ export default async function Page({ params }: any) {
                 </div>
                 <div className="flex flex-wrap gap-4">
                   <p>@{userDetail.account_data[0].username}</p>
-                  <p>{userDetail.account_data[0].occupation}</p>
+                  <p className="capitalize">
+                    {userDetail.account_data[0].occupation}
+                  </p>
 
-                  <p>{userDetail.account_data[0].pronouns}</p>
-                  <p>
+                  <p className="capitalize">
+                    {userDetail.account_data[0].pronouns}
+                  </p>
+                  <p className="capitalize">
                     {userDetail.account_data[0].city}, {""}
                     {userDetail.account_data[0].country}
                   </p>
@@ -246,8 +250,8 @@ export default async function Page({ params }: any) {
               <Tabs defaultValue="portfolio" className="w-full mt-8">
                 <TabsList>
                   <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-                  <TabsTrigger value="experience">Experience</TabsTrigger>
-                  <TabsTrigger value="certificate">Certificate</TabsTrigger>
+                  <TabsTrigger value="experience">Experiences</TabsTrigger>
+                  <TabsTrigger value="certificate">Certificates</TabsTrigger>
                   <TabsTrigger value="education">Education</TabsTrigger>
                 </TabsList>
                 <div className="mt-6">
@@ -264,13 +268,10 @@ export default async function Page({ params }: any) {
                   </TabsContent>
 
                   <TabsContent value="experience">
-                    {dummyAccount.experiences &&
-                    dummyAccount.experiences.length > 0 ? (
-                      dummyAccount.experiences.map(
-                        (item: ExperienceItem, index) => (
-                          <Experience key={index} experience={item} />
-                        )
-                      )
+                    {userExperiences && userExperiences.length > 0 ? (
+                      userExperiences.map((item: ExperienceItem, index) => (
+                        <Experience key={index} experience={item} />
+                      ))
                     ) : (
                       <div>No experience available.</div>
                     )}

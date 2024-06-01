@@ -17,8 +17,14 @@ export default function Experience({
         <AccordionItem value="item-1">
           <div className="flex gap-4 mb-1">
             <small>
-              {experience.startMonth} {experience.startYear} -{" "}
-              {experience.endMonth} {experience.endYear}
+              {experience.start_month} {experience.start_year} -
+              {experience.working_here ? (
+                <span> Present</span>
+              ) : (
+                <span>
+                  {experience.end_month} {experience.end_year}
+                </span>
+              )}{" "}
             </small>
             <small>{experience.type}</small>
           </div>

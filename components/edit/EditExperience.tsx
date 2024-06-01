@@ -34,9 +34,12 @@ import Image from "next/image";
 import { editIcon, trashIcon } from "@/components/icons";
 import { month } from "@/data/month";
 import { Checkbox } from "../ui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
+  user_id: z.number().int(),
+  order: z.number().int(),
   position: z.string().min(2, {
     message: "name must be at least 2 characters.",
   }),
@@ -49,18 +52,87 @@ const formSchema = z.object({
   start_year: z.string(),
   end_month: z.string().optional(),
   end_year: z.string().optional(),
-  working_here: z.boolean(),
+  working_here: z.boolean().optional(),
 });
 
-export default function EditExperience({
-  experienceList,
-}: {
-  experienceList: any[];
-}) {
+async function postExperience(values: z.infer<typeof formSchema>) {
+  try {
+    const supabase = createClient();
+
+    const { data: newPortfolio, error: errorInsert } = await supabase
+      .from("experiences")
+      .insert([{ ...values }])
+      .select();
+    if (errorInsert) {
+      console.error("Error fetching authenticated user:", errorInsert);
+      return;
+    }
+
+    return;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function getExperiences(userId: number) {
+  const supabase = createClient();
+
+  const { data: response, error } = await supabase
+    .from("experiences")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching portfolio:", error);
+    return null;
+  }
+
+  return response;
+}
+
+async function deleteExperience(experienceId: number) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("experiences")
+    .delete()
+    .eq("id", experienceId);
+
+  if (error) {
+    console.error("Error fetching experience:", error);
+    return null;
+  }
+
+  return true;
+}
+
+async function editExperience(
+  experienceId: number,
+  values: z.infer<typeof formSchema>
+) {
+  const supabase = createClient();
+
+  const { data: updatedData, error: updateError } = await supabase
+    .from("experiences")
+    .update(values)
+    .eq("id", experienceId);
+
+  if (updateError) {
+    console.error("Error update experience:", updateError);
+    return null;
+  }
+  console.log("updated");
+  return;
+}
+
+export default function EditExperience({ userId }: { userId: number }) {
   const [workingStatus, setWorkingStatus] = useState(false);
+  const [experiences, setExperiences] = useState<any[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      user_id: userId,
+      order: 0,
       position: "",
       company: "",
       type: "",
@@ -73,10 +145,26 @@ export default function EditExperience({
     },
   });
 
+  useEffect(() => {
+    getExperiences(userId).then((data) => {
+      if (data) {
+        setExperiences(data);
+      }
+    });
+  }, [onSubmit, handleDelete, handleEdit]);
+
+  function handleDelete(experienceId: number) {
+    deleteExperience(experienceId);
+  }
+
+  function handleEdit(values: z.infer<typeof formSchema>) {
+    // editExperience(editId, values);
+    alert("edit");
+  }
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
+    postExperience(values);
   }
   return (
     <>
@@ -233,6 +321,7 @@ export default function EditExperience({
                         <div className="space-y-1 leading-none">
                           <FormLabel>I currently working here</FormLabel>
                         </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -315,25 +404,42 @@ export default function EditExperience({
         </DialogContent>
       </Dialog>
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
+
       <div className="flex flex-col gap-2 mt-4">
-        <div className="flex  justify-between  rounded-lg  bg-white overflow-hidden">
-          <div className="py-4 ps-2">
-            <div className="flex gap-4">
-              <small>October 2023 - January 2024 </small>
-              {/* <small>Full time</small> */}
+        {experiences.map((item) => (
+          <div className="flex  justify-between  rounded-lg  bg-white overflow-hidden">
+            <div className="py-4 ps-2">
+              <div className="flex gap-4">
+                <small>
+                  {item.start_month} {item.start_year} -
+                  {item.working_here ? (
+                    <span> Present</span>
+                  ) : (
+                    <span>
+                      {item.end_month} {item.end_year}
+                    </span>
+                  )}{" "}
+                </small>
+                {/* <small>Full time</small> */}
+              </div>
+              <h3 className="font-medium">{item.position}</h3>
+              <p className="text-sm">{item.company}</p>
             </div>
-            <h3 className="font-medium">Frontend Developer</h3>
-            <p className="text-sm">Company name</p>
+            <div className=" grid grid-cols-1 w-[60px]">
+              <p className="bg-yellow-400  flex items-center justify-center">
+                {editIcon}
+              </p>
+              <Button
+                variant="none"
+                size="none"
+                className="bg-red-400 hover:bg-red-500  flex items-center justify-center rounded-none"
+                onClick={() => handleDelete(item.id)}
+              >
+                {trashIcon}
+              </Button>
+            </div>
           </div>
-          <div className=" grid grid-cols-1 w-[60px]">
-            <p className="bg-yellow-400  flex items-center justify-center">
-              {editIcon}
-            </p>
-            <p className="bg-red-400   flex items-center justify-center">
-              {trashIcon}
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
     </>
   );

@@ -6,14 +6,16 @@
   }
 
   export interface ExperienceItem {
-    startMonth: string;
-    startYear: string;
-    endMonth: string;
-    endYear: string;
+    start_month: string;
+    start_year: string;
+    end_month: string;
+    end_year: string;
     position: string;
     company: string;
     type: string;
     description: string;
+    working_here: boolean;
+   
   }
 
  export  interface CertificateItem {
