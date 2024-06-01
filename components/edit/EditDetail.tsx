@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
+import { Checkbox } from "../ui/checkbox";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -34,6 +35,7 @@ const formSchema = z.object({
   pronouns: z.string(),
   city: z.string(),
   country: z.string(),
+  open_to_work: z.boolean(),
 });
 
 async function updateDetail(
@@ -210,10 +212,27 @@ export default function EditDetail({ data }: { data: any }) {
         />
         <FormField
           control={form.control}
+          name="open_to_work"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white">
+              <FormControl>
+                <Checkbox
+                  checked={data.open_to_work}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Open to work</FormLabel>
+              </div>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="occupation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Occupation</FormLabel>
+              <FormLabel>Occupation / Expertise</FormLabel>
               <FormControl>
                 <Input
                   placeholder="student, freelance..."

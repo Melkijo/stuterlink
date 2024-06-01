@@ -206,9 +206,20 @@ export default async function Page({ params }: any) {
               </div>
               {/* user detail */}
               <div className="mt-3">
-                <h1 className="text-xl font-bold">
-                  {userDetail.account_data[0].name}
-                </h1>
+                <div className="flex gap-4 items-center mb-2">
+                  <h1 className="text-2xl font-bold">
+                    {userDetail.account_data[0].name}
+                  </h1>
+                  {userDetail.account_data[0].open_to_work ? (
+                    <p className="text-sm font-medium bg-green-400 text-white px-4 py-2 rounded-full">
+                      Open to work
+                    </p>
+                  ) : (
+                    <p className="text-sm font-medium bg-red-400 text-white px-4 py-2 rounded-full">
+                      Not open to work
+                    </p>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-4">
                   <p>@{userDetail.account_data[0].username}</p>
                   <p>{userDetail.account_data[0].occupation}</p>
