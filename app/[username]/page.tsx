@@ -16,9 +16,12 @@ import UsernameButton from "@/components/username/UsernameButton";
 
 async function getUserDetail(username: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/${username}`, {
-      method: "GET",
-    });
+    const response = await fetch(
+      `https://stuterlink.vercel.app/api/${username}`,
+      {
+        method: "GET",
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -134,7 +137,6 @@ export default async function Page({ params }: any) {
     return <h1>No User found</h1>;
   }
 
-  console.log(userDetail.account_data[0]);
   const userSocialMedia = await getUserSocialMedia(
     userDetail.account_data[0].id
   );
