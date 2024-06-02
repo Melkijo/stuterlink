@@ -188,7 +188,7 @@ export default function EditInterest(props: EditInterestProps) {
           {interest.map((item, index) => (
             <div
               key={index}
-              className=" ps-2 min-h-[50px] overflow-hidden bg-white border-dark border flex  justify-between w-full rounded-lg"
+              className=" ps-2 min-h-[50px] overflow-hidden bg-white  flex  justify-between w-full rounded-lg"
             >
               <p className="text-base flex items-center">{item}</p>
               <Button

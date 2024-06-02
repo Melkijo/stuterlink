@@ -18,16 +18,13 @@ export async function logout() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    // redirect('/')
     console.log("error logout");
   } else {
     navigate();
   }
 }
 
-export default function UsernameButton({ data }: { data: any }) {
-  //   console.log(data);
-
+export default function UsernameButton({ data }: Readonly<{ data: any }>) {
   return (
     <>
       <Sheet>

@@ -105,23 +105,6 @@ async function updateDetail(
   return;
 }
 
-// async function updateProfile(
-//   values: z.infer<typeof formSchema>,
-//   userId: number
-// ) {
-//   const client = createClient();
-//   const { data, error } = await client
-//     .from("user_data")
-//     .update(values)
-//     .eq("id", userId)
-//     .select();
-//   if (error) {
-//     console.error(error);
-//     return;
-//   }
-//   console.log(data);
-// }
-
 export default function EditDetail({ data }: { data: any }) {
   const [image, setImage] = useState<File>();
   const [resume, setResume] = useState<File>();
@@ -138,36 +121,13 @@ export default function EditDetail({ data }: { data: any }) {
       occupation: data.occupation,
       //   profilePicture: data.profilePicture,
       pronouns: data.pronouns,
+      open_to_work: data.open_to_work,
       city: data.city,
       country: data.country,
     },
   });
 
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    if (!values.profile_picture && !values.resume) {
-      values.profile_picture = imageEdit;
-      values.resume = resumeEdit;
-    } else if (!values.profile_picture) {
-      values.profile_picture = imageEdit;
-    } else if (!values.resume) {
-      values.resume = resumeEdit;
-    }
-
-    console.log(values);
-    if (image && resume) {
-      updateDetail(data.id, values, image, resume);
-    } else if (image) {
-      updateDetail(data.id, values, image);
-    } else if (resume) {
-      updateDetail(data.id, values, resume);
-    } else {
-      updateDetail(data.id, values);
-    }
-  }
-
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // updateProfile(values, data.id);
     console.log(image, resume);
     console.log(values);
 
@@ -217,7 +177,7 @@ export default function EditDetail({ data }: { data: any }) {
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white">
               <FormControl>
                 <Checkbox
-                  checked={data.open_to_work}
+                  checked={field.value}
                   onCheckedChange={field.onChange}
                 />
               </FormControl>

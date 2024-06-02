@@ -11,13 +11,13 @@ const fetchUsername = async (
   usernameInput: string
 ): Promise<boolean | null> => {
   try {
-    const supabase = createClient(); // Assuming you have supabase configured
+    const supabase = createClient();
     const { data: account_data, error } = await supabase
       .from("user_data")
       .select("username")
       .eq("username", usernameInput);
 
-    console.log(usernameInput); // Optional for debugging
+    console.log(usernameInput);
 
     if (error) {
       console.error("Error fetching username:", error);

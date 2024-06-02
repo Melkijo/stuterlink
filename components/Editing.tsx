@@ -14,10 +14,7 @@ export default function Editing({ data }: { data: any }) {
   console.log(data);
   return (
     <div className="relative z-20 ">
-      <div
-
-      //   className="fixed left-0 top-0 z-10 w-[300px] bg-gray-300 h-screen overflow-y-scroll overflow-x-hidden"
-      >
+      <div>
         <Tabs defaultValue="detail" className="w-full mt-8 ">
           <TabsList>
             <div>
