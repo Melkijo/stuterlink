@@ -164,8 +164,6 @@ export default function EditCertificate({ userId }: { userId: number }) {
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     postCertificate(values);
     console.log(values);
   }

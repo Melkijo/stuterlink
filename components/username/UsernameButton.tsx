@@ -11,6 +11,7 @@ import {
 import Editing from "../Editing";
 import { navigate } from "./actions";
 import { createClient } from "@/utils/supabase/client";
+import { editIcon } from "../icons";
 
 export async function logout() {
   const supabase = createClient();
@@ -27,17 +28,21 @@ export async function logout() {
 export default function UsernameButton({ data }: Readonly<{ data: any }>) {
   return (
     <>
-      <Sheet>
-        <SheetTrigger className="py-2 px-4 bg-background">Edit</SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetDescription>
-              <Editing data={data} />
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-      <Button onClick={logout}>Logout</Button>
+      <div className="flex flex-col gap-4 max-w-fit">
+        <Sheet>
+          <SheetTrigger className="py-2 px-4 bg-yellow-400 hover:bg-yellow-500 w-16 h-16 rounded-full flex justify-center items-center">
+            {editIcon}
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetDescription>
+                <Editing data={data} />
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+        <Button onClick={logout}>Logout</Button>
+      </div>
     </>
   );
 }

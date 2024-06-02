@@ -114,29 +114,7 @@ export const socialMedia = [
         
        
 
-        education :[
-
-            {
-                startYear: "2018",
-                endYear: "2022",
-                degree: "BSc Computer Science",
-                school: "University of Lagos",
-            },
-            {
-                startYear: "2018",
-                endYear: "2022",
-                degree: "BSc Computer Science",
-                school: "University of Lagos",
-             
-            },
-            {
-                startYear: "2018",
-                endYear: "2022",
-                degree: "BSc Computer Science",
-                school: "University of Lagos",
-              
-            },
-        ],
+      
 
         otherLinks: [
             {

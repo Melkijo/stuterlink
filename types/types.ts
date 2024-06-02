@@ -28,8 +28,8 @@
  export  interface EducationItem {
     school: string;
     degree: string;
-    startYear: string;
-    endYear: string;
+    start_year: string;
+    end_year: string;
     }
   
  export  interface AccountData {
@@ -47,6 +47,6 @@
     portfolios: PortfolioItem[];
     // experiences: ExperienceItem[];
     // certificates : CertificateItem[];
-    education:  EducationItem[];
+    // education:  EducationItem[];
     otherLinks: { image:string; title: string; url: string }[];
   }

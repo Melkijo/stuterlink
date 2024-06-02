@@ -51,10 +51,10 @@ export default function Editing({ data }: { data: any }) {
               <EditCertificate userId={data.id} />
             </TabsContent>
             <TabsContent value="education">
-              <EditEducation educationList={data.education} />
+              <EditEducation userId={data.id} />
             </TabsContent>
             <TabsContent value="other">
-              <EditOther otherLinkList={data.otherLink} />
+              <EditOther otherLinkList={data.portfolios} userId={data.id} />
             </TabsContent>
           </div>
         </Tabs>
