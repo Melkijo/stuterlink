@@ -112,28 +112,7 @@ export const socialMedia = [
         },
         ],
         
-        certificates : [
-            {
-                title: "Certificate 1",
-                yearPublished: "2020",
-                publishedBy: "Google",
-                url: "https://www.johndoe.com"
-            },
-            {
-                title: "Certificate 2",
-                yearPublished: "2020",
-                publishedBy: "Google",
-                url: "https://www.johndoe.com"
-
-            },
-            {
-                title: "Certificate 3",
-                yearPublished: "2020",
-                publishedBy: "Google",
-                url: "https://www.johndoe.com"
-
-            },
-        ],
+       
 
         education :[
 

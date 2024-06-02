@@ -84,7 +84,7 @@ async function getExperiences(userId: number) {
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Error fetching portfolio:", error);
+    console.error("Error fetching experience:", error);
     return null;
   }
 
@@ -113,7 +113,7 @@ async function editExperience(
 ) {
   const supabase = createClient();
 
-  const { data: updatedData, error: updateError } = await supabase
+  const { error: updateError } = await supabase
     .from("experiences")
     .update(values)
     .eq("id", experienceId);
@@ -151,14 +151,6 @@ export default function EditExperience({ userId }: { userId: number }) {
     defaultValues: {
       user_id: userId,
       order: 0,
-      position: "",
-      company: "",
-      type: "",
-      description: "",
-      start_month: "",
-      start_year: "",
-      end_month: "",
-      end_year: "",
       working_here: false,
     },
   });
@@ -184,13 +176,11 @@ export default function EditExperience({ userId }: { userId: number }) {
   }
 
   function handleEdit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     console.log(editExperienceId);
     editExperience(editExperienceId, values);
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     postExperience(values);
   }
 

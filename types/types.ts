@@ -20,8 +20,8 @@
 
  export  interface CertificateItem {
     title: string;
-    yearPublished: string;
-    publishedBy: string;
+    year_published: string;
+    published_by: string;
     url: string;
   }
 
@@ -46,7 +46,7 @@
     socialMedia: { type: string; url: string }[];
     portfolios: PortfolioItem[];
     // experiences: ExperienceItem[];
-    certificates : CertificateItem[];
+    // certificates : CertificateItem[];
     education:  EducationItem[];
     otherLinks: { image:string; title: string; url: string }[];
   }

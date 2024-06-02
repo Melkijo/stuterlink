@@ -161,12 +161,9 @@ export default async function Page({ params }: any) {
     otherLink: userOtherLink,
   };
 
-  //   console.log(userData);
-
   return (
     <>
       <Navbar />
-      {/* <UsernameButton /> */}
 
       {user && user.email === userData.email ? (
         <UsernameButton data={userData} />
@@ -292,13 +289,10 @@ export default async function Page({ params }: any) {
                     value="certificate"
                     className="grid grid-cols-2 gap-2"
                   >
-                    {dummyAccount.certificates &&
-                    dummyAccount.certificates.length > 0 ? (
-                      dummyAccount.certificates.map(
-                        (item: CertificateItem, index) => (
-                          <Certificate key={index} certificate={item} />
-                        )
-                      )
+                    {userCertificates && userCertificates.length > 0 ? (
+                      userCertificates.map((item: CertificateItem, index) => (
+                        <Certificate key={index} certificate={item} />
+                      ))
                     ) : (
                       <div>No certificates available.</div>
                     )}

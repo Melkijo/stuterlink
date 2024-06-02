@@ -48,7 +48,7 @@ export default function Editing({ data }: { data: any }) {
               <EditExperience userId={data.id} />
             </TabsContent>
             <TabsContent value="certificate">
-              <EditCertificate certificateList={data.certificates} />
+              <EditCertificate userId={data.id} />
             </TabsContent>
             <TabsContent value="education">
               <EditEducation educationList={data.education} />
