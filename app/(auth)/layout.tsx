@@ -3,6 +3,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 const satoshi = localFont({
   src: [
@@ -54,7 +55,10 @@ export default async function AuthLayout({
   }
   return (
     <html lang="en">
-      <body className={satoshi.className}>{children}</body>
+      <body className={satoshi.className}>
+        <main>{children}</main>
+        <Toaster />
+      </body>
     </html>
   );
 }

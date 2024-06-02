@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { signup } from "./actions";
-import { Suspense } from "react";
+import { navigateUsername, signup } from "./actions";
+import { Suspense, useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,6 +32,8 @@ function useSearch() {
 }
 
 function PageContent() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const username = useSearch();
 
   // 1. Define your form.
@@ -39,71 +42,100 @@ function PageContent() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    signup({ userData: values }, username);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+    const result = await signup({ userData: values }, username);
+    setIsLoading(false);
+
+    if (!result.success) {
+      toast("Register failed", {
+        description: "Check your email or password and try again",
+      });
+    } else {
+      toast("Register success", {
+        description: "Redirecting to your profile",
+      });
+      navigateUsername({ username: result.data || "" });
+    }
   }
 
   return (
-    <div className="max-w-[480px] mx-auto mt-20">
-      <p className="mb-4">
-        <span>stuterlink.me/{username}</span> is ready!
-      </p>
-      <h1 className="text-3xl font-bold text-left mb-8">
-        Create your account now
-      </h1>
-      <div className="w-full flex justify-center flex-col items-center">
-        <Button className="w-full">Sign up with Google</Button>
+    <div className="bg-gray-100">
+      <div className="max-w-lg mx-auto  h-screen  flex items-center justify-center ">
+        <div className="w-full bg-white  px-6 py-8 rounded-2xl mx-4">
+          <p className="mb-4">
+            <span>stuterlink.me/{username}</span> is ready!
+          </p>
+          <h1 className="text-3xl font-bold text-left mb-6">
+            Create your account now
+          </h1>
+          <div className="w-full flex justify-center flex-col items-center">
+            <Button className="w-full text-md" size="lg">
+              Sign up with Google
+            </Button>
+          </div>
+          <hr className="my-4" />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        // name="email"
+                        type="email"
+                        required
+                        placeholder="melkijo@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        // name="password"
+                        type="password"
+                        required
+                        placeholder="****"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full text-md"
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Sign up"}
+              </Button>
+            </form>
+          </Form>
+          <div className="flex justify-center mt-4">
+            <p>Have an account?</p>
+            <Button variant="link" size="none">
+              <Link href="/login" className="text-blue-500 ml-1 text-md">
+                Signup
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
-      <p className="my-4 text-center">Or</p>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    // name="email"
-                    type="email"
-                    required
-                    placeholder="melkijo@example.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    // name="password"
-                    type="password"
-                    required
-                    placeholder="****"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormDescription>
-            Have an account?{" "}
-            <Link href="/login" className="text-blue-500">
-              Login
-            </Link>
-          </FormDescription>
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
     </div>
   );
 }

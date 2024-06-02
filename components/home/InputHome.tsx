@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 
 const fetchUsername = async (
   usernameInput: string
@@ -34,6 +34,7 @@ const fetchUsername = async (
 export default function InputHome() {
   const router = useRouter();
   const [link, setLink] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [buttonActive, setButtonActive] = useState<boolean>(false); // State for button disabled state (boolean type)
   const [usernameAvailability, setUsernameAvailability] = useState<
     boolean | null
@@ -66,36 +67,49 @@ export default function InputHome() {
   }, [link]); // Re-run useEffect on link change
 
   const handleLink = () => {
+    setButtonActive(true);
     if (link === "") return;
 
     router.push(`/signup?username=${link}`);
+    setButtonActive(false);
   };
   return (
     <div className="mt-8">
-      <p>get your link now</p>
+      <p className="text-base md:text-lg">
+        Get a professional online presence now
+      </p>
       <div className="flex w-full mt-2 items-center space-x-2">
         <Input
           type="text"
-          placeholder="stuterlink"
+          placeholder="stuterlink/"
           value={link}
+          className="text-md h-12"
           onChange={(e) => setLink(e.target.value)}
         />
-        <Button onClick={handleLink} disabled={buttonActive}>
+        <Button
+          onClick={handleLink}
+          disabled={buttonActive}
+          className="text-md h-12"
+        >
           {
             usernameAvailability === null
-              ? "Checking availability..." // Display loading message while checking
+              ? "Checking..." // Display loading message while checking
               : usernameAvailability
               ? "Username unavailable" // Display button text if username is available
               : "Get it" // Display message if username is taken
           }
         </Button>
       </div>
-      <p>
+      <div className="mt-2 text-base text-gray-400">
         have an account?{" "}
-        <Button variant="link" size="none" className="text-blue-500">
+        <Button
+          variant="link"
+          size="none"
+          className="text-blue-500 ml-1 text-base"
+        >
           <Link href="/login">Login</Link>
         </Button>
-      </p>
+      </div>
     </div>
   );
 }

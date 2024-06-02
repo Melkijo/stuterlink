@@ -1,3 +1,5 @@
+import { HeroBackground } from "@/components/home/HeroBackground";
+import { HeroText } from "@/components/home/HeroText";
 import InputHome from "@/components/home/InputHome";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -20,11 +22,14 @@ export default async function Home() {
   }
   return (
     <main>
-      <div className="max-w-[480px] mx-auto mt-10 px-5">
-        <h1 className="text-3xl text-center leading-normal">
-          Make your online appereance more profesional
-        </h1>
-        <InputHome />
+      <div className="max-w-full ">
+        <HeroBackground>
+          <div className="max-w-xl mx-auto px-5 ">
+            <HeroText words={"Stand Out in Today's Digital World"} />
+            <InputHome />
+          </div>
+          /
+        </HeroBackground>
       </div>
     </main>
   );
