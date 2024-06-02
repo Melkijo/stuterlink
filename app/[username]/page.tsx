@@ -17,17 +17,19 @@ import OtherTab from "@/components/OtherTab";
 import UserHeader from "@/components/UserHeader";
 
 async function getUserDetail(username: string) {
-  try {
-    const response = await fetch(
-      `https://stuterlink.vercel.app/api/${username}`,
-      {
-        method: "GET",
-      }
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log("cant fetching data: ", error);
+  const supabase = createClient();
+  const { data: account_data, error } = await supabase
+    .from("user_data")
+    .select("*")
+    .eq("username", username);
+
+  if (error) {
+    console.error("Error fetching authenticated user:", error);
+    return null;
+  }
+
+  if (account_data) {
+    return account_data;
   }
 }
 
@@ -133,27 +135,20 @@ export default async function Page({ params }: any) {
   } = await supabase.auth.getUser();
 
   const userDetail = await getUserDetail(params.username);
-
-  if (!userDetail.account_data[0]) {
+  if (!userDetail) {
     return <h1>No User found</h1>;
   }
 
-  const userSocialMedia = await getUserSocialMedia(
-    userDetail.account_data[0].id
-  );
-  const userPortfolio = await getUserPortfolio(userDetail.account_data[0].id);
-  const userCertificates = await getUserCertificates(
-    userDetail.account_data[0].id
-  );
-  const userEducation = await getUserEducation(userDetail.account_data[0].id);
-  const userExperiences = await getUserExperiences(
-    userDetail.account_data[0].id
-  );
-  const userOtherLink = await getUserOtherLink(userDetail.account_data[0].id);
+  const userSocialMedia = await getUserSocialMedia(userDetail[0].id);
+  const userPortfolio = await getUserPortfolio(userDetail[0].id);
+  const userCertificates = await getUserCertificates(userDetail[0].id);
+  const userEducation = await getUserEducation(userDetail[0].id);
+  const userExperiences = await getUserExperiences(userDetail[0].id);
+  const userOtherLink = await getUserOtherLink(userDetail[0].id);
 
   //store all the data in one object
   const userData = {
-    ...userDetail.account_data[0],
+    ...userDetail[0],
     socialMedia: userSocialMedia,
     portfolios: userPortfolio,
     certificates: userCertificates,
@@ -182,7 +177,7 @@ export default async function Page({ params }: any) {
           </TabsList>
           <TabsContent value="personal">
             <div className="w-full  text-dark px-5 py-10">
-              {userDetail.account_data[0] ? (
+              {userDetail[0] ? (
                 <>
                   <UserHeader userDetail={userData} />
 

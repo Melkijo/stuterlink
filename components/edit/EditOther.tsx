@@ -191,7 +191,6 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // setLoading(true);
-    console.log(values);
 
     if (image) {
       postOtherLink(image, values);
