@@ -159,13 +159,15 @@ export default async function Page({ params }: any) {
 
   return (
     <>
-      <div>
-        <div className="relative max-w-[720px] mx-auto">
-          {user && user.email === userData.email ? (
-            <div className="absolute z-10 left-0 top-10">
-              <UsernameButton data={userData} />
-            </div>
-          ) : null}
+      <div className="relative max-w-[720px] mx-auto ">
+        <div className="mx-4 ">
+          <div className="absolute h-screen">
+            {user && user.email === userData.email ? (
+              <div className="fixed bottom-10">
+                <UsernameButton data={userData} />
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
 
@@ -173,84 +175,81 @@ export default async function Page({ params }: any) {
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="personal">Personal</TabsTrigger>
-            {}
             <TabsTrigger value="other">Other</TabsTrigger>
           </TabsList>
           <TabsContent value="personal">
             <div className="w-full  text-dark px-5 py-10">
-              {userDetail[0] ? (
-                <>
-                  <UserHeader userDetail={userData} />
+              <UserHeader userDetail={userData} />
 
-                  {/* tabs */}
-                  <Tabs defaultValue="portfolio" className="w-full mt-8">
-                    <TabsList>
-                      <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-                      <TabsTrigger value="experience">Experiences</TabsTrigger>
-                      <TabsTrigger value="certificate">
-                        Certificates
-                      </TabsTrigger>
-                      <TabsTrigger value="education">Education</TabsTrigger>
-                    </TabsList>
-                    <div className="mt-6">
-                      <TabsContent value="portfolio">
-                        <div className="flex flex-col gap-2">
-                          {userPortfolio && userPortfolio.length > 0 ? (
-                            userPortfolio.map((item, index) => (
-                              <Portfolio key={index} portfolio={item} />
-                            ))
-                          ) : (
-                            <div>No portfolios available.</div>
-                          )}
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="experience">
-                        {userExperiences && userExperiences.length > 0 ? (
-                          userExperiences.map((item: ExperienceItem, index) => (
-                            <Experience key={index} experience={item} />
-                          ))
-                        ) : (
-                          <div>No experience available.</div>
-                        )}
-                      </TabsContent>
-                      <TabsContent value="education">
-                        {userEducation && userEducation.length > 0 ? (
-                          userEducation.map((item: EducationItem, index) => (
-                            <Education key={index} education={item} />
-                          ))
-                        ) : (
-                          <div>No education available.</div>
-                        )}
-                      </TabsContent>
-                      <TabsContent
-                        value="certificate"
-                        className="grid grid-cols-2 gap-2"
-                      >
-                        {userCertificates && userCertificates.length > 0 ? (
-                          userCertificates.map(
-                            (item: CertificateItem, index) => (
-                              <Certificate key={index} certificate={item} />
-                            )
-                          )
-                        ) : (
-                          <div>No certificates available.</div>
-                        )}
-                      </TabsContent>
+              {/* tabs */}
+              <Tabs defaultValue="portfolio" className="w-full mt-8">
+                <TabsList>
+                  <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+                  {userExperiences && userExperiences.length > 0 ? (
+                    <TabsTrigger value="experience">Experiences</TabsTrigger>
+                  ) : null}
+                  {userCertificates && userCertificates.length > 0 ? (
+                    <TabsTrigger value="certificate">Certificates</TabsTrigger>
+                  ) : null}
+                  {userEducation && userEducation.length > 0 ? (
+                    <TabsTrigger value="education">Education</TabsTrigger>
+                  ) : null}
+                </TabsList>
+                <div className="mt-6">
+                  <TabsContent value="portfolio">
+                    <div className="flex flex-col gap-2">
+                      {userPortfolio && userPortfolio.length > 0 ? (
+                        userPortfolio.map((item, index) => (
+                          <Portfolio key={index} portfolio={item} />
+                        ))
+                      ) : (
+                        <div>No portfolios available.</div>
+                      )}
                     </div>
-                  </Tabs>
-                </>
-              ) : null}
-              {/* footer */}
-              <div className="mt-8">
-                <p className="text-sm text-center">Made with ❤️ by Mejo</p>
-              </div>
+                  </TabsContent>
+
+                  <TabsContent value="experience">
+                    {userExperiences && userExperiences.length > 0 ? (
+                      userExperiences.map((item: ExperienceItem, index) => (
+                        <Experience key={index} experience={item} />
+                      ))
+                    ) : (
+                      <div>No experience available.</div>
+                    )}
+                  </TabsContent>
+                  <TabsContent value="education">
+                    {userEducation && userEducation.length > 0 ? (
+                      userEducation.map((item: EducationItem, index) => (
+                        <Education key={index} education={item} />
+                      ))
+                    ) : (
+                      <div>No education available.</div>
+                    )}
+                  </TabsContent>
+                  <TabsContent
+                    value="certificate"
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    {userCertificates && userCertificates.length > 0 ? (
+                      userCertificates.map((item: CertificateItem, index) => (
+                        <Certificate key={index} certificate={item} />
+                      ))
+                    ) : (
+                      <div>No certificates available.</div>
+                    )}
+                  </TabsContent>
+                </div>
+              </Tabs>
             </div>
           </TabsContent>
           <TabsContent value="other">
             <OtherTab userData={userData} />
           </TabsContent>
         </Tabs>
+        {/* footer */}
+        <div className="mt-8  ">
+          <p className="text-sm text-center">Made by Mejo</p>
+        </div>
       </div>
     </>
   );

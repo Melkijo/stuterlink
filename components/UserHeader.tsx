@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SocialMedia from "./SocialMedia";
 import Interest from "./Interest";
+import { Button } from "./ui/button";
 
 export default function UserHeader({ userDetail }: any) {
   const user = userDetail;
@@ -34,13 +35,15 @@ export default function UserHeader({ userDetail }: any) {
               >
                 Contact Me
               </Link>
-              <Link
-                href={user.resume ? user.resume : ""}
-                target="_blank"
-                className="px-7 py-3 rounded-full border border-dark font-medium"
-              >
-                My Resume
-              </Link>
+              {user.resume !== null && user.resume !== "" ? (
+                <Link
+                  href={user.resume ? user.resume : ""}
+                  target="_blank"
+                  className="px-7 py-3 rounded-full border border-dark font-medium"
+                >
+                  My Resume
+                </Link>
+              ) : null}
             </div>
           </div>
           {/* user detail */}
@@ -55,7 +58,7 @@ export default function UserHeader({ userDetail }: any) {
                 </p>
               ) : (
                 <p className="text-sm font-medium bg-red-400 text-white px-4 py-2 rounded-full">
-                  Not open to work
+                  Unavailable
                 </p>
               )}
             </div>
@@ -74,14 +77,18 @@ export default function UserHeader({ userDetail }: any) {
           </div>
 
           {/* Interest */}
-          <div className="mt-4">
-            <Interest interest={user.interests} />
-          </div>
+          {user.interests && user.interests.length > 0 ? (
+            <div className="mt-4">
+              <Interest interest={user.interests} />
+            </div>
+          ) : null}
 
           {/* Social Media */}
-          <div className="flex gap-2 mt-4">
-            <SocialMedia userId={user.id} />
-          </div>
+          {user.socialMedia && user.socialMedia.length > 0 ? (
+            <div className="flex gap-2 mt-4">
+              <SocialMedia userId={user.id} />
+            </div>
+          ) : null}
         </>
       ) : (
         <p>No user details available</p>

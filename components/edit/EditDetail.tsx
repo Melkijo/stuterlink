@@ -26,17 +26,28 @@ import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 
+const MAX_FILE_SIZE = 5000000;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "name must be at least 2 characters.",
-  }),
+  name: z
+    .string()
+    .min(2, {
+      message: "name must be at least 2 characters.",
+    })
+    .optional(),
   occupation: z.string().optional(),
   profile_picture: z.any(),
   resume: z.any(),
-  pronouns: z.string(),
-  city: z.string(),
-  country: z.string(),
-  open_to_work: z.boolean(),
+  pronouns: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  open_to_work: z.boolean().optional(),
 });
 
 async function updateDetail(
@@ -116,17 +127,18 @@ export default function EditDetail({ data }: Readonly<{ data: any }>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: data.name,
-      occupation: data.occupation,
-      pronouns: data.pronouns,
-      open_to_work: data.open_to_work,
-      city: data.city,
-      country: data.country,
+      name: data.name || "",
+      occupation: data.occupation || "",
+      pronouns: data.pronouns || "",
+      open_to_work: data.open_to_work || "",
+      city: data.city || "",
+      country: data.country || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
+    console.log(values);
 
     if (!values.profile_picture && !values.resume) {
       values.profile_picture = imageEdit;
@@ -180,8 +192,9 @@ export default function EditDetail({ data }: Readonly<{ data: any }>) {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="melkijo" {...field} />
+                <Input placeholder="full name" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -215,6 +228,7 @@ export default function EditDetail({ data }: Readonly<{ data: any }>) {
                   //   value={data.occupation}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

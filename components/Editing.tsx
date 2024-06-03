@@ -11,7 +11,6 @@ import EditSocialMedia from "./edit/EditSocialMedia";
 import EditOther from "./edit/EditOther";
 
 export default function Editing({ data }: { data: any }) {
-  console.log(data);
   return (
     <div className="relative z-20 ">
       <div>
@@ -21,14 +20,14 @@ export default function Editing({ data }: { data: any }) {
               <TabsTrigger value="detail">Detail</TabsTrigger>
               <TabsTrigger value="socialMedia">Social Media</TabsTrigger>
               <TabsTrigger value="interest">Interest</TabsTrigger>
-              <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-              <TabsTrigger value="experience">Experience</TabsTrigger>
-              <TabsTrigger value="certificate">Certificate</TabsTrigger>
+              <TabsTrigger value="portfolio">Portfolios</TabsTrigger>
+              <TabsTrigger value="experience">Experiences</TabsTrigger>
+              <TabsTrigger value="certificate">Certificates</TabsTrigger>
               <TabsTrigger value="education">Education</TabsTrigger>
               <TabsTrigger value="other">Other</TabsTrigger>
             </div>
           </TabsList>
-          <div className="mt-6 px-4">
+          <div className="mt-6 ">
             <TabsContent value="detail">
               <EditDetail data={data} />
             </TabsContent>

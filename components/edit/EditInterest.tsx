@@ -209,22 +209,26 @@ export default function EditInterest(props: EditInterestProps) {
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div>
         <div className="flex gap-2 flex-wrap items-center mt-4">
-          {interest.map((item, index) => (
-            <div
-              key={index}
-              className=" ps-2 min-h-[50px] overflow-hidden bg-white  flex  justify-between w-full rounded-lg"
-            >
-              <p className="text-base flex items-center">{item}</p>
-              <Button
-                variant="none"
-                size="none"
-                className=" w-[70px]   bg-red-400  hover:bg-red-500  rounded-none"
-                onClick={() => handleDelete(item, interest, props.userId)}
-              >
-                {trashIcon}
-              </Button>
-            </div>
-          ))}
+          {interest ? (
+            <>
+              {interest.map((item, index) => (
+                <div
+                  key={index}
+                  className=" ps-2 min-h-[50px] overflow-hidden bg-gray-100  flex  justify-between w-full rounded-lg"
+                >
+                  <p className="text-base flex items-center">{item}</p>
+                  <Button
+                    variant="none"
+                    size="none"
+                    className=" w-[70px]   bg-red-400  hover:bg-red-500  rounded-none"
+                    onClick={() => handleDelete(item, interest, props.userId)}
+                  >
+                    {trashIcon}
+                  </Button>
+                </div>
+              ))}
+            </>
+          ) : null}
         </div>
       </div>
     </>

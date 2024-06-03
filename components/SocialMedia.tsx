@@ -13,7 +13,6 @@ import Link from "next/link";
 export default async function SocialMedia({
   userId,
 }: Readonly<{ userId: string }>) {
-  console.log(userId);
   const supabase = createClient();
   let { data: socialMedia, error } = await supabase
     .from("social_media")
@@ -27,7 +26,6 @@ export default async function SocialMedia({
     return null;
   }
 
-  console.log(socialMedia);
   return (
     <>
       {socialMedia !== null && socialMedia.length !== 0 ? (

@@ -29,6 +29,7 @@ import Image from "next/image";
 import { editIcon, trashIcon } from "@/components/icons";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number(),
@@ -38,7 +39,12 @@ const formSchema = z.object({
   }),
   image: z.any(),
   url: z.string(),
-  description: z.string().optional(),
+  description: z
+    .string()
+    .max(200, {
+      message: "description must be at most 200 characters.",
+    })
+    .optional(),
 });
 
 async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
@@ -66,7 +72,7 @@ async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
     //add new object data in values
     values.image = imageLink.publicUrl;
 
-    const { data: newPortfolio, error: errorInsert } = await supabase
+    const { error: errorInsert } = await supabase
       .from("portfolios")
       .insert([{ ...values }])
       .select();
@@ -185,16 +191,27 @@ export default function EditPortfolio({
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
 
-    if (image) {
-      postPortfolio(image, values);
-    } else {
-      alert("Please upload image");
+    try {
+      if (image) {
+        await postPortfolio(image, values);
+        toast("Portfolio updated", {
+          description: "Your portfolio has been add successfully",
+        });
+      } else {
+        toast("Please upload an image");
+      }
+    } catch (error) {
+      console.error("Error updating portfolio:", error);
+      toast("Error", {
+        description: "There was an error updating your portfolio.",
+      });
+    } finally {
+      setImage(undefined);
+      setLoading(false);
     }
-
-    setImage(undefined);
   }
 
   useEffect(() => {
@@ -206,17 +223,46 @@ export default function EditPortfolio({
     });
   }, [onSubmit, handleDelete, handleEdit]);
 
-  function handleDelete(portfolioId: number) {
-    deletePortfolio(portfolioId);
+  async function handleDelete(portfolioId: number) {
+    try {
+      await deletePortfolio(portfolioId);
+      toast("Portfolio deleted", {
+        description: "Your portfolio has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting portfolio:", error);
+      toast("Error", {
+        description: "There was an error deleting your portfolio.",
+      });
+    }
   }
 
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    if (!values.image) values.image = imageEdit;
-    if (image) {
-      editPortfolio(editId, values, image);
-    } else {
-      editPortfolio(editId, values);
+  async function handleEdit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      if (!values.image) values.image = imageEdit;
+      if (image) {
+        await editPortfolio(editId, values, image);
+      } else {
+        await editPortfolio(editId, values);
+      }
+      toast("Portfolio updated", {
+        description: "Your portfolio has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error editing portfolio:", error);
+      toast("Error", {
+        description: "There was an error updating your portfolio.",
+      });
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function defaultValues(title: string, url: string, description: string) {
+    formEdit.setValue("title", title);
+    formEdit.setValue("url", url);
+    formEdit.setValue("description", description);
   }
 
   return (
@@ -228,85 +274,84 @@ export default function EditPortfolio({
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="mb-4">Portfolio</DialogTitle>
-            <DialogDescription>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
-                >
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="example project" {...field} />
-                        </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Url</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com" {...field} />
-                        </FormControl>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4 text-left"
+              >
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="example project" {...field} />
+                      </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="image"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="file"
-                            {...field}
-                            onChange={(event) => {
-                              if (event.target.files) {
-                                setImage(event.target.files[0]);
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Make it as short as posibble"
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Url</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://example.com" {...field} />
+                      </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Loading..." : "Add new"}
-                  </Button>
-                </form>
-              </Form>
-            </DialogDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          {...field}
+                          onChange={(event) => {
+                            if (event.target.files) {
+                              setImage(event.target.files[0]);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Make it as short as posibble"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Loading..." : "Add new"}
+                </Button>
+              </form>
+            </Form>
           </DialogHeader>
         </DialogContent>
       </Dialog>
@@ -349,6 +394,7 @@ export default function EditPortfolio({
                         onClick={() => {
                           setEditId(item.id);
                           setImageEdit(item.image);
+                          defaultValues(item.title, item.url, item.description);
                         }}
                       >
                         {editIcon}
@@ -359,98 +405,94 @@ export default function EditPortfolio({
                         <DialogTitle className="mb-4">
                           Edit portfolio {item.title}
                         </DialogTitle>
-                        <DialogDescription>
-                          <Form {...formEdit}>
-                            <form
-                              onSubmit={formEdit.handleSubmit(handleEdit)}
-                              className="space-y-4"
+
+                        <Form {...formEdit}>
+                          <form
+                            onSubmit={formEdit.handleSubmit(handleEdit)}
+                            className="space-y-4 text-left"
+                          >
+                            <FormField
+                              control={formEdit.control}
+                              name="title"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Title</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="example project"
+                                      {...field}
+                                    />
+                                  </FormControl>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={formEdit.control}
+                              name="url"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Url</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="https://example.com"
+                                      {...field}
+                                    />
+                                  </FormControl>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={formEdit.control}
+                              name="image"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Image</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="file"
+                                      {...field}
+                                      onChange={(event) => {
+                                        if (event.target.files) {
+                                          setImage(event.target.files[0]);
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={formEdit.control}
+                              name="description"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>description</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="Make it as short as posibble"
+                                      className="resize-none"
+                                      {...field}
+                                    />
+                                  </FormControl>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={loading}
                             >
-                              <FormField
-                                control={formEdit.control}
-                                name="title"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Title</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="example project"
-                                        {...field}
-                                        defaultValue={item.title}
-                                      />
-                                    </FormControl>
-
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={formEdit.control}
-                                name="url"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Url</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="https://example.com"
-                                        {...field}
-                                        defaultValue={item.url}
-                                      />
-                                    </FormControl>
-
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={formEdit.control}
-                                name="image"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Image</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="file"
-                                        {...field}
-                                        onChange={(event) => {
-                                          if (event.target.files) {
-                                            setImage(event.target.files[0]);
-                                          }
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={formEdit.control}
-                                name="description"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>description</FormLabel>
-                                    <FormControl>
-                                      <Textarea
-                                        placeholder="Make it as short as posibble"
-                                        className="resize-none"
-                                        {...field}
-                                        defaultValue={item.description}
-                                      />
-                                    </FormControl>
-
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={loading}
-                              >
-                                {loading ? "Loading..." : "Update"}
-                              </Button>
-                            </form>
-                          </Form>
-                        </DialogDescription>
+                              {loading ? "Loading..." : "Update"}
+                            </Button>
+                          </form>
+                        </Form>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>

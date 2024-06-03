@@ -34,11 +34,7 @@ export default function UsernameButton({ data }: Readonly<{ data: any }>) {
             {editIcon}
           </SheetTrigger>
           <SheetContent>
-            <SheetHeader>
-              <SheetDescription>
-                <Editing data={data} />
-              </SheetDescription>
-            </SheetHeader>
+            <Editing data={data} />
           </SheetContent>
         </Sheet>
         <Button onClick={logout}>Logout</Button>

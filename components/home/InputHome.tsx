@@ -7,7 +7,15 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { debounce } from "lodash";
 import { usernameDisable, format } from "@/data/data";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import SignupPopup from "../SignupPopup";
 const checkAvailableUsername = async (
   usernameInput: string
 ): Promise<boolean | null> => {
@@ -99,19 +107,26 @@ export default function InputHome() {
           className="text-md h-12"
           onChange={(e) => setLink(e.target.value)}
         />
-        <Button
-          onClick={handleLink}
-          disabled={buttonActive}
-          className="text-md h-12"
-        >
-          {
-            usernameAvailability === null
-              ? "Checking..." // Display loading message while checking
-              : usernameAvailability
-              ? "Username unavailable" // Display button text if username is available
-              : "Get it" // Display message if username is taken
-          }
-        </Button>
+
+        <Dialog>
+          <DialogTrigger
+            disabled={buttonActive}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-6 py-3 bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            {
+              usernameAvailability === null
+                ? "Checking..." // Display loading message while checking
+                : usernameAvailability
+                ? "Username unavailable" // Display button text if username is available
+                : "Get it" // Display message if username is taken
+            }
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <SignupPopup link={link} />
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="mt-2 text-base text-gray-400">
         have an account?{" "}

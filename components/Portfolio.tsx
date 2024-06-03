@@ -14,7 +14,7 @@ export default function Portfolio({ portfolio }: { portfolio: PortfolioItem }) {
     <Dialog>
       <DialogTrigger>
         <div className=" pr-4 border border-gray hover:border-black flex gap-4 items-center rounded-xl overflow-hidden h-[160px]">
-          <div className="min-w-[200px] h-full overflow-hidden">
+          <div className="min-w-[150px] max-w-[150px] h-full overflow-hidden">
             <Image
               src={portfolio.image}
               alt="portfolio image"
@@ -38,7 +38,7 @@ export default function Portfolio({ portfolio }: { portfolio: PortfolioItem }) {
         <DialogHeader>
           <DialogTitle>{portfolio.title}</DialogTitle>
           <DialogDescription className="h-fit">
-            <div className="w-full h-[200px] overflow-hidden">
+            <div className="w-full h-[200px] overflow-hidden rounded-md">
               <Image
                 src={portfolio.image}
                 alt="portfolio image"
@@ -57,7 +57,7 @@ export default function Portfolio({ portfolio }: { portfolio: PortfolioItem }) {
               </Link>
             </div>
             <div>
-              <p className="text-sm">{portfolio.description}</p>
+              <p className="text-sm text-left">{portfolio.description}</p>
             </div>
           </DialogDescription>
         </DialogHeader>

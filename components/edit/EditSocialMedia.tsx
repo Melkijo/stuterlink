@@ -72,13 +72,13 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       user_id: props.userId,
-      linkedin: socialMedia[0].linkedin || "",
-      github: socialMedia[0].github || "",
-      x: socialMedia[0].x || "",
-      instagram: socialMedia[0].instagram || "",
-      facebook: socialMedia[0].facebook || "",
-      youtube: socialMedia[0].youtube || "",
-      tiktok: socialMedia[0].tiktok || "",
+      linkedin: socialMedia[0]?.linkedin || "",
+      github: socialMedia[0]?.github || "",
+      x: socialMedia[0]?.x || "",
+      instagram: socialMedia[0]?.instagram || "",
+      facebook: socialMedia[0]?.facebook || "",
+      youtube: socialMedia[0]?.youtube || "",
+      tiktok: socialMedia[0]?.tiktok || "",
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -110,18 +110,6 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="user_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input {...field} className="hidden" />
-              </FormControl>
-              {/* <FormMessage /> */}
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="linkedin"
