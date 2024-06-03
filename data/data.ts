@@ -46,6 +46,53 @@ export const socialMedia = [
     },
     ];
 
+    export const usernameDisable = [
+        "login",
+        "signup",
+        "profile",
+        "settings",
+        "search",
+        "explore",
+        "notifications",
+        "messages",
+        "bookmarks",
+        "lists",
+        "profile",
+        "more",
+        "home",
+        "api",
+        "error",
+        "404",
+        "500",
+        "terms",
+        "privacy",
+        "about",
+        "contact",
+        "help",
+        "support",
+        "status",
+        "blog",
+        "jobs",
+        "cookies",
+        "ads",
+        "info",
+        "brand",
+        "advertising",
+        "business",
+        "developers",
+        "directory",
+        "settings",
+        "account",
+        "password",
+        "security",
+        "log-out",
+        "log-in",
+        "callback",
+        "confirm",
+      ];
+
+      export const format = /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
+
     
 
     export const dummyAccount:AccountData = {
@@ -54,7 +101,7 @@ export const socialMedia = [
         password: "password",
         username: "johndoe",
         resume: "https://www.resumemaker.online/es.php",
-        profilePicture: "https://firebasestorage.googleapis.com/v0/b/beasiswakita-3e322.appspot.com/o/img%2F20220118190946_IMG_8897%201.png?alt=media&token=d9550a4e-cdbf-4300-a38c-366aaeabb85c",
+        profilePicture: "https://dufkorayqhkwairjodcm.supabase.co/storage/v1/object/public/stuterlink/profilePicture/default-image.png",
         pronouns: "He/Him",
         city: "Lagos",
         country: "Nigeria",

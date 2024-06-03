@@ -24,8 +24,6 @@ export async function login({userData}: {userData: {email: string, password: str
       console.log(dataError);
       return { success: false, error: dataError.message };
     }
-  
-    // redirect(`/${data[0].username}`);
     return { success: true, data: data[0].username };
 
 }

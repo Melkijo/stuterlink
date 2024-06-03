@@ -173,6 +173,7 @@ export default async function Page({ params }: any) {
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="personal">Personal</TabsTrigger>
+            {}
             <TabsTrigger value="other">Other</TabsTrigger>
           </TabsList>
           <TabsContent value="personal">

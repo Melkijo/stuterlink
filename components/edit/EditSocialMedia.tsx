@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number(),
@@ -32,19 +33,19 @@ const formSchema = z.object({
 
 async function updateSocialMedia(
   values: z.infer<typeof formSchema>,
-  userId: any
+  userId: number
 ) {
   const client = createClient();
   const { data, error } = await client
-    .from("user_data")
+    .from("social_media")
     .update(values)
-    .eq("id", userId)
+    .eq("user_id", userId)
     .select();
   if (error) {
     console.error(error);
     return;
   }
-  console.log(data);
+  return;
 }
 
 async function addSocialMedia(values: z.infer<typeof formSchema>, userId: any) {
@@ -55,17 +56,18 @@ async function addSocialMedia(values: z.infer<typeof formSchema>, userId: any) {
     console.error(error);
     return;
   }
-  console.log(data);
+  return console.log("success");
 }
 
 interface EditSocialMediaProps {
   socialMediaList: any; // Replace with your actual social media object type
-  userId: any; // Assuming userId is a number, adjust if it's a different type
+  userId: number; // Assuming userId is a number, adjust if it's a different type
 }
 
 export default function EditSocialMedia(props: EditSocialMediaProps) {
   const socialMedia = props.socialMediaList;
-  //   console.log(socialMedia);
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,15 +81,32 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
       tiktok: socialMedia[0].tiktok || "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (socialMedia.length === 0) {
-      addSocialMedia(values, props.userId);
-    } else {
-      updateSocialMedia(values, props.userId);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+
+    try {
+      if (socialMedia.length === 0) {
+        await addSocialMedia(values, props.userId);
+        toast("Social media added", {
+          description: "Your social media has been added successfully",
+        });
+      } else {
+        await updateSocialMedia(values, props.userId);
+        toast("Social media updated", {
+          description: "Your social media has been updated successfully",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating social media:", error);
+      toast("Error", {
+        description:
+          "There was an error updating your social media. Refresh to view the changes.",
+      });
+    } finally {
+      setLoading(false);
     }
-    console.log(values);
   }
-  //   console.log(socialMedia);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -123,15 +142,7 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
             <FormItem>
               <FormLabel>Github</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="github.com/..."
-                  {...field}
-                  //   value={
-                  //     socialMedia.find(
-                  //       (item: socialMediaType) => item.type === "github"
-                  //     )?.url
-                  //   }
-                />
+                <Input placeholder="github.com/..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,15 +156,7 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
             <FormItem>
               <FormLabel>Twitter</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="x.com/..."
-                  {...field}
-                  //   value={
-                  //     socialMedia.find(
-                  //       (item: socialMediaType) => item.type === "x"
-                  //     )?.url
-                  //   }
-                />
+                <Input placeholder="x.com/..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -212,8 +215,8 @@ export default function EditSocialMedia(props: EditSocialMediaProps) {
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Update
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Loading..." : "Update"}
         </Button>
       </form>
     </Form>

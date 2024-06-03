@@ -185,7 +185,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       user_id: userId,
-      order: otherLinkList?.length + 1 || 0,
+      order: 0,
     },
   });
 
@@ -221,6 +221,18 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
     } else {
       editOtherLink(editId, values);
     }
+  }
+
+  function defaultValue(
+    image: string,
+    title: string,
+    url: string,
+    description: string
+  ) {
+    formEdit.setValue("image", image);
+    formEdit.setValue("title", title);
+    formEdit.setValue("url", url);
+    formEdit.setValue("description", description);
   }
 
   return (
@@ -317,7 +329,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div className="mt-4 flex flex-col gap-2">
         {otherLink.length === 0 ? (
-          <p className="text-center">No otherLink yet</p>
+          <p className="text-center">No other link yet</p>
         ) : (
           <>
             {/* otherLink list */}
@@ -353,6 +365,12 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
                         onClick={() => {
                           setEditId(item.id);
                           setImageEdit(item.image);
+                          defaultValue(
+                            item.image,
+                            item.title,
+                            item.url,
+                            item.description
+                          );
                         }}
                       >
                         {editIcon}

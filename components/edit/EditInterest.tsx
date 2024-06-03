@@ -36,6 +36,7 @@ import { editIcon, trashIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { set } from "lodash";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   interest: z.string().min(1, {
@@ -112,8 +113,8 @@ async function getUserInterest(userId: number) {
 }
 
 export default function EditInterest(props: EditInterestProps) {
-  //   console.log(props.interestList);
   const [interest, setInterest] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,21 +126,44 @@ export default function EditInterest(props: EditInterestProps) {
   useEffect(() => {
     getUserInterest(props.userId).then((data) => {
       if (data) {
-        setInterest(data[0].interests || []);
+        setInterest(data[0].interests);
       }
     });
   }, [onSubmit, handleDelete]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    addInterest(values.interest, interest, props.userId);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await addInterest(values.interest, interest, props.userId);
+      toast("Interest added", {
+        description: "Your interest has been added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding interest:", error);
+      toast("Error", {
+        description: "There was an error adding your interest.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleDelete(
+  async function handleDelete(
     interest: string,
     interestList: string[] | undefined,
     userId: any
   ) {
-    deleteInterest(interest, interestList, userId);
+    try {
+      await deleteInterest(interest, interestList, userId);
+      toast("Interest deleted", {
+        description: "Your interest has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting interest:", error);
+      toast("Error", {
+        description: "There was an error deleting your interest.",
+      });
+    }
   }
 
   return (
@@ -173,8 +197,8 @@ export default function EditInterest(props: EditInterestProps) {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full">
-                    Add new
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Loading..." : "Add new"}
                   </Button>
                 </form>
               </Form>

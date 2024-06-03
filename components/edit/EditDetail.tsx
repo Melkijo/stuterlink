@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -102,10 +103,9 @@ async function updateDetail(
     return null;
   }
   console.log("updated");
-  return;
 }
 
-export default function EditDetail({ data }: { data: any }) {
+export default function EditDetail({ data }: Readonly<{ data: any }>) {
   const [image, setImage] = useState<File>();
   const [resume, setResume] = useState<File>();
 
@@ -117,9 +117,7 @@ export default function EditDetail({ data }: { data: any }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: data.name,
-      //   resume: data.resume,
       occupation: data.occupation,
-      //   profilePicture: data.profilePicture,
       pronouns: data.pronouns,
       open_to_work: data.open_to_work,
       city: data.city,
@@ -127,9 +125,8 @@ export default function EditDetail({ data }: { data: any }) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(image, resume);
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
 
     if (!values.profile_picture && !values.resume) {
       values.profile_picture = imageEdit;
@@ -140,7 +137,6 @@ export default function EditDetail({ data }: { data: any }) {
       values.resume = resumeEdit;
     }
 
-    console.log(values);
     if (image && resume) {
       updateDetail(data.id, values, image, resume);
     } else if (image) {
@@ -149,6 +145,29 @@ export default function EditDetail({ data }: { data: any }) {
       updateDetail(data.id, values, resume);
     } else {
       updateDetail(data.id, values);
+    }
+    try {
+      if (image && resume) {
+        await updateDetail(data.id, values, image, resume);
+      } else if (image) {
+        await updateDetail(data.id, values, image);
+      } else if (resume) {
+        await updateDetail(data.id, values, resume);
+      } else {
+        await updateDetail(data.id, values);
+      }
+
+      toast("Profile updated", {
+        description:
+          "Your profile has been updated. Refresh to view the changes.",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast("Error", {
+        description: "There was an error updating your profile.",
+      });
+    } finally {
+      setLoading(false);
     }
   }
   return (
@@ -161,11 +180,7 @@ export default function EditDetail({ data }: { data: any }) {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="melkijo"
-                  {...field}
-                  //   defaultValue={data.name}
-                />
+                <Input placeholder="melkijo" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -284,12 +299,7 @@ export default function EditDetail({ data }: { data: any }) {
               <FormItem>
                 <FormLabel>City</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Lagos"
-                    {...field}
-
-                    //   value={data.city}
-                  />
+                  <Input placeholder="Lagos" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -302,11 +312,7 @@ export default function EditDetail({ data }: { data: any }) {
               <FormItem>
                 <FormLabel>Country</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Africa"
-                    {...field}
-                    //   value={data.country}
-                  />
+                  <Input placeholder="Africa" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -320,8 +326,9 @@ export default function EditDetail({ data }: { data: any }) {
             setResumeEdit(data.resume);
             setImageEdit(data.image);
           }}
+          disabled={loading}
         >
-          Update
+          {loading ? "Loading..." : "Update"}
         </Button>
       </form>
     </Form>

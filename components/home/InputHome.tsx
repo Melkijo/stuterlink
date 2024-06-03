@@ -5,42 +5,52 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
+import { usernameDisable, format } from "@/data/data";
 
-const fetchUsername = async (
+const checkAvailableUsername = async (
   usernameInput: string
 ): Promise<boolean | null> => {
-  try {
-    const supabase = createClient();
-    const { data: account_data, error } = await supabase
-      .from("user_data")
-      .select("username")
-      .eq("username", usernameInput);
+  const username = usernameInput.toLowerCase();
 
-    console.log(usernameInput);
-
-    if (error) {
-      console.error("Error fetching username:", error);
-      return false;
+  if (usernameDisable.includes(username)) {
+    return true;
+  } else {
+    if (format.test(username)) {
+      console.log("ada di format");
+      return true;
     }
+    try {
+      const supabase = createClient();
+      const { data: account_data, error } = await supabase
+        .from("user_data")
+        .select("username")
+        .eq("username", username);
 
-    return account_data?.length > 0; // Check if any accounts match the username
-  } catch (e) {
-    console.error("Error fetching username:", e);
-    return null;
+      if (error) {
+        console.error("Error fetching username:", error);
+        return false;
+      }
+
+      return account_data?.length > 0; // Check if any accounts match the username
+    } catch (e) {
+      console.error("Error fetching username:", e);
+      return null;
+    }
   }
 };
 
 export default function InputHome() {
   const router = useRouter();
   const [link, setLink] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [buttonActive, setButtonActive] = useState<boolean>(false); // State for button disabled state (boolean type)
   const [usernameAvailability, setUsernameAvailability] = useState<
     boolean | null
   >(null); // State for username availability check result (boolean or null type)
 
+  //its for checking username availability real time
   useEffect(() => {
+    setLink(link.toLowerCase());
     const handleUsernameChange = async () => {
       if (!link) {
         setUsernameAvailability(null); // Reset availability on empty input
@@ -48,19 +58,22 @@ export default function InputHome() {
         return;
       }
 
-      const isUsernameAvailable = await fetchUsername(link);
-      console.log(isUsernameAvailable);
+      // check if link have a symbol that is prohibited in url
+      if (link.match(/[^a-zA-Z0-9-]/g)) {
+        setUsernameAvailability(true);
+        setButtonActive(true);
+        return;
+      }
+
+      const isUsernameAvailable = await checkAvailableUsername(link);
       setUsernameAvailability(isUsernameAvailable);
       if (isUsernameAvailable) {
         setButtonActive(true);
       } else {
         setButtonActive(false);
       }
-      //   setButtonActive(isUsernameAvailable); // Enable button if username is available
     };
-
     const debouncedHandleUsernameChange = debounce(handleUsernameChange, 500); // Debounce for performance
-
     debouncedHandleUsernameChange(); // Initial check and on subsequent changes
 
     return () => debouncedHandleUsernameChange.cancel(); // Cleanup on unmount
