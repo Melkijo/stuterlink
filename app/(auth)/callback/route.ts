@@ -33,17 +33,16 @@ export async function GET(request: Request) {
     if (!error) {
       
       const { data: { user } } = await supabase.auth.getUser();
-      console.log("user",user)
         if (user) {
             // store the user's email in a cookie
            const {data,error} =await supabase
            .from('user_data')
            .select('username').eq('email',user.email)
 
-            console.log("data",data)
+          
               if(data && data.length === 0){
                 const newUsername = cookies().get('name')
-                console.log("new username",newUsername?.value)
+
 
                 if(newUsername){
                     const { error } = await supabase
@@ -56,7 +55,7 @@ export async function GET(request: Request) {
                 }
               }
             else {
-                console.log("kondisi user udah ada", data)
+               
                 if (data && data.length > 0) {
                     return NextResponse.redirect(`${origin}${next}${data[0].username}`)
                 }
