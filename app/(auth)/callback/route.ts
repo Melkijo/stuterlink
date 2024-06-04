@@ -4,7 +4,6 @@ import { type CookieOptions, createServerClient } from '@supabase/ssr'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
-  console.log("ini origin",origin)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
@@ -49,14 +48,20 @@ export async function GET(request: Request) {
                     .insert({ email: user.email, username: newUsername.value });
                     if(!error){
                         cookies().delete('name')
-                        return NextResponse.redirect(`https://stuterlink.vercel.app${next}${newUsername.value}`)
+                        return NextResponse.redirect(`${origin}${next}${newUsername.value}`)
                     }
+                }
+                else{
+                    const { error } = await supabase.auth.signOut();
+                    return NextResponse.redirect(`${origin}`)
+
                 }
               }
             else {
                
                 if (data && data.length > 0) {
-                    return NextResponse.redirect(`https://stuterlink.vercel.app${next}${data[0].username}`)
+                    cookies().delete('name')
+                    return NextResponse.redirect(`${origin}${next}${data[0].username}`)
                 }
             }
 
@@ -68,5 +73,5 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`https://stuterlink.vercel.app`)
+  return NextResponse.redirect(`${origin}`)
 }
