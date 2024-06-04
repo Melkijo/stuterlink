@@ -34,6 +34,7 @@ import Image from "next/image";
 import { editIcon, linkIcon, trashIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number(),
@@ -121,6 +122,7 @@ async function deleteCertificate(certificateId: number) {
 export default function EditCertificate({ userId }: { userId: number }) {
   const [certificates, setCertificates] = useState<any[]>([]);
   const [editId, setEditId] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -155,17 +157,52 @@ export default function EditCertificate({ userId }: { userId: number }) {
     formEdit.setValue("year_published", year_published);
     formEdit.setValue("published_by", published_by);
   }
-  function handleDelete(certificateId: number) {
-    deleteCertificate(certificateId);
+  async function handleDelete(certificateId: number) {
+    try {
+      await deleteCertificate(certificateId); // Assuming deleteCertificate is an async function
+      toast("Certificate deleted", {
+        description: "Your certificate has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting certificate:", error);
+      toast("Error", {
+        description: "There was an error deleting your certificate.",
+      });
+    }
   }
 
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    putCertificate(values, editId);
+  async function handleEdit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await putCertificate(values, editId); // Assuming editCertificate is an async function
+      toast("Certificate updated", {
+        description: "Your certificate has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating certificate:", error);
+      toast("Error", {
+        description: "There was an error updating your certificate.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    postCertificate(values);
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await postCertificate(values); // Assuming postCertificate is an async function
+      toast("Certificate added", {
+        description: "Your certificate has been added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding certificate:", error);
+      toast("Error", {
+        description: "There was an error adding your certificate.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <>
@@ -250,8 +287,8 @@ export default function EditCertificate({ userId }: { userId: number }) {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full">
-                    Add new
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Loading..." : "Add new"}
                   </Button>
                 </form>
               </Form>
@@ -261,137 +298,143 @@ export default function EditCertificate({ userId }: { userId: number }) {
       </Dialog>
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div className="flex flex-col gap-2 mt-4">
-        {certificates.map((certificate) => (
-          <div
-            key={certificate.id}
-            className=" flex  justify-between rounded-lg  bg-white overflow-hidden"
-          >
-            <div className="ps-2 py-2">
-              <div className="flex justify-between">
-                <small>{certificate.year_published}</small>
+        {certificates.length > 0 ? (
+          certificates.map((certificate) => (
+            <div
+              key={certificate.id}
+              className="flex justify-between rounded-lg bg-white overflow-hidden border border-gray-200"
+            >
+              <div className="ps-2 py-2">
+                <div className="flex justify-between">
+                  <small>{certificate.year_published}</small>
+                </div>
+                <h3 className="font-medium">{certificate.title}</h3>
+                <small>{certificate.published_by}</small>
               </div>
-              <h3 className="font-medium">{certificate.title}</h3>
-              <small>{certificate.published_by}</small>
-            </div>
-            <div className=" grid grid-cols-1  w-[60px]">
-              <Dialog>
-                <DialogTrigger className="w-full">
-                  <Button
-                    className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
-                    variant="none"
-                    size="none"
-                    onClick={() => {
-                      setEditId(certificate.id);
-                      defaultValues(
-                        certificate.title,
-                        certificate.url,
-                        certificate.year_published,
-                        certificate.published_by
-                      );
-                    }}
-                  >
-                    {editIcon}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="mb-4">
-                      Certificate {certificate.title}
-                    </DialogTitle>
-                    <DialogDescription>
-                      <Form {...formEdit}>
-                        <form
-                          onSubmit={formEdit.handleSubmit(handleEdit)}
-                          className="space-y-4"
-                        >
-                          <FormField
-                            control={formEdit.control}
-                            name="title"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Title</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="frontend web certificate...."
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={formEdit.control}
-                            name="url"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Url</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="https://example.com/certificate/..."
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 w-[60px]">
+                <Dialog>
+                  <DialogTrigger className="w-full">
+                    <Button
+                      className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
+                      variant="none"
+                      size="none"
+                      onClick={() => {
+                        setEditId(certificate.id);
+                        defaultValues(
+                          certificate.title,
+                          certificate.url,
+                          certificate.year_published,
+                          certificate.published_by
+                        );
+                      }}
+                    >
+                      {editIcon}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="mb-4">
+                        Certificate {certificate.title}
+                      </DialogTitle>
+                      <DialogDescription>
+                        <Form {...formEdit}>
+                          <form
+                            onSubmit={formEdit.handleSubmit(handleEdit)}
+                            className="space-y-4"
+                          >
                             <FormField
                               control={formEdit.control}
-                              name="year_published"
+                              name="title"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Year published</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="20xx" {...field} />
-                                  </FormControl>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={formEdit.control}
-                              name="published_by"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Published By</FormLabel>
+                                  <FormLabel>Title</FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder="google, microsoft..."
+                                      placeholder="frontend web certificate...."
                                       {...field}
                                     />
                                   </FormControl>
-
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
-                          </div>
-
-                          <Button type="submit" className="w-full">
-                            Update
-                          </Button>
-                        </form>
-                      </Form>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-              <Button
-                variant="none"
-                size="none"
-                className="bg-red-400 hover:bg-red-500  flex items-center justify-center rounded-none"
-                onClick={() => handleDelete(certificate.id)}
-              >
-                {trashIcon}
-              </Button>
+                            <FormField
+                              control={formEdit.control}
+                              name="url"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Url</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="https://example.com/certificate/..."
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <FormField
+                                control={formEdit.control}
+                                name="year_published"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Year published</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="20xx" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={formEdit.control}
+                                name="published_by"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Published By</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="google, microsoft..."
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={loading}
+                            >
+                              {loading ? "Loading..." : "Update"}
+                            </Button>
+                          </form>
+                        </Form>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  variant="none"
+                  size="none"
+                  className="bg-red-400 hover:bg-red-500 flex items-center justify-center rounded-none"
+                  onClick={() => handleDelete(certificate.id)}
+                  disabled={loading}
+                >
+                  {trashIcon}
+                </Button>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center w-full ">
+            <small>No certificates</small>
           </div>
-        ))}
+        )}
       </div>
     </>
   );

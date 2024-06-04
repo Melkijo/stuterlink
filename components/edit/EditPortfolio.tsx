@@ -365,7 +365,7 @@ export default function EditPortfolio({
             {portfolio.map((item: any, index) => (
               <div
                 key={index}
-                className="  bg-white  flex gap-1 justify-between items-center rounded-xl overflow-hidden h-[100px]"
+                className="  bg-white  flex gap-1 justify-between items-center rounded-xl overflow-hidden h-[100px] border border-gray-200"
               >
                 <div className="w-[100px] h-full">
                   <Image

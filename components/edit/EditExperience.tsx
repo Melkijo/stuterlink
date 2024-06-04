@@ -38,6 +38,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { set } from "lodash";
 import { ScrollArea } from "../ui/scroll-area";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number().int(),
@@ -146,7 +147,7 @@ export default function EditExperience({ userId }: { userId: number }) {
   const [workingStatus, setWorkingStatus] = useState(false);
   const [experiences, setExperiences] = useState<any[]>([]);
   const [editExperienceId, setEditExperienceId] = useState<number>(0);
-
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -172,17 +173,53 @@ export default function EditExperience({ userId }: { userId: number }) {
     });
   }, [onSubmit, handleDelete, handleEdit]);
 
-  function handleDelete(experienceId: number) {
-    deleteExperience(experienceId);
+  async function handleDelete(experienceId: number) {
+    try {
+      await deleteExperience(experienceId);
+      toast("Experience deleted", {
+        description: "Your experience has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting experience:", error);
+      toast("Error", {
+        description: "There was an error deleting your experience.",
+      });
+    }
   }
 
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    console.log(editExperienceId);
-    editExperience(editExperienceId, values);
+  async function handleEdit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      console.log(editExperienceId);
+      await editExperience(editExperienceId, values);
+      toast("Experience updated", {
+        description: "Your experience has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating experience:", error);
+      toast("Error", {
+        description: "There was an error updating your experience.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    postExperience(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await postExperience(values);
+      toast("Experience added", {
+        description: "Your experience has been added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding experience:", error);
+      toast("Error", {
+        description: "There was an error adding your experience.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function defaultValue(
@@ -221,34 +258,17 @@ export default function EditExperience({ userId }: { userId: number }) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className=" text-left"
               >
-                <ScrollArea className="w-full h-96 pr-4 space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="position"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Position</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="assistant lecture, web developer...."
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid grid-cols-2 gap-2">
+                <ScrollArea className="w-full h-96">
+                  <div className=" pr-4 ps-2 pb-8 flex gap-4 flex-col">
                     <FormField
                       control={form.control}
-                      name="company"
+                      name="position"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Company</FormLabel>
+                          <FormLabel>Position</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="google, microsoft..."
+                              placeholder="assistant lecture, web developer...."
                               {...field}
                             />
                           </FormControl>
@@ -257,157 +277,197 @@ export default function EditExperience({ userId }: { userId: number }) {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+                    <div className="grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name="company"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Company</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Choose" />
-                              </SelectTrigger>
+                              <Input
+                                placeholder="google, microsoft..."
+                                {...field}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="full time">
-                                Full time
-                              </SelectItem>
-                              <SelectItem value="part time">
-                                Part time
-                              </SelectItem>
-                              <SelectItem value="intership">
-                                Intership
-                              </SelectItem>
-                              <SelectItem value="contract">Contract</SelectItem>
-                              <SelectItem value="volunteer">
-                                Volunteer
-                              </SelectItem>
-                              <SelectItem value="entrepreneur">
-                                Entrepreneur
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
 
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="start_month"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Start month</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Choose" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {month.map((item: string, index) => (
-                                <SelectItem key={index} value={item}>
-                                  {item}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Type</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Choose" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="full time">
+                                  Full time
                                 </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="start_year"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Start year</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="20xx"
-                              {...field}
-                              type="number"
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="working_here"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            onClick={() => {
-                              setWorkingStatus(!workingStatus);
-                            }}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>I currently working here</FormLabel>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name="end_month"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>End month</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger disabled={workingStatus}>
-                                <SelectValue placeholder="Choose" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {month.map((item: string, index) => (
-                                <SelectItem key={index} value={item}>
-                                  {item}
+                                <SelectItem value="part time">
+                                  Part time
                                 </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                                <SelectItem value="internship">
+                                  Internship
+                                </SelectItem>
+                                <SelectItem value="contract">
+                                  Contract
+                                </SelectItem>
+                                <SelectItem value="volunteer">
+                                  Volunteer
+                                </SelectItem>
+                                <SelectItem value="entrepreneur">
+                                  Entrepreneur
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
 
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name="start_month"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Start month</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Choose" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {month.map((item: string, index) => (
+                                  <SelectItem key={index} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="start_year"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Start year</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="20xx"
+                                {...field}
+                                type="number"
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="working_here"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              onClick={() => {
+                                setWorkingStatus(!workingStatus);
+                              }}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>I currently working here</FormLabel>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name="end_month"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>End month</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger disabled={workingStatus}>
+                                  <SelectValue placeholder="Choose" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {month.map((item: string, index) => (
+                                  <SelectItem key={index} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="end_year"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>End year</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="20xx"
+                                {...field}
+                                type="number"
+                                disabled={workingStatus}
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
-                      name="end_year"
+                      name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>End year</FormLabel>
+                          <FormLabel>Description</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="20xx"
+                            <Textarea
+                              placeholder="Make it as short as posibble"
+                              className="resize-none"
                               {...field}
-                              type="number"
-                              disabled={workingStatus}
                             />
                           </FormControl>
 
@@ -416,28 +476,9 @@ export default function EditExperience({ userId }: { userId: number }) {
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Make it as short as posibble"
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </ScrollArea>
-                <Button type="submit" className="w-full">
-                  Add new
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Loading..." : "Add new"}
                 </Button>
               </form>
             </Form>
@@ -451,7 +492,7 @@ export default function EditExperience({ userId }: { userId: number }) {
           experiences.map((item: Experience, index) => (
             <div
               key={index}
-              className="flex  justify-between  rounded-lg  bg-white overflow-hidden"
+              className="flex  justify-between  rounded-lg  bg-white overflow-hidden border border-gray-200"
             >
               <div className="py-4 ps-2">
                 <div className="flex gap-4">
@@ -557,8 +598,8 @@ export default function EditExperience({ userId }: { userId: number }) {
                                         <SelectItem value="part time">
                                           Part time
                                         </SelectItem>
-                                        <SelectItem value="intership">
-                                          Intership
+                                        <SelectItem value="internship">
+                                          Internship
                                         </SelectItem>
                                         <SelectItem value="contract">
                                           Contract
@@ -720,8 +761,12 @@ export default function EditExperience({ userId }: { userId: number }) {
                                 </FormItem>
                               )}
                             />
-                            <Button type="submit" className="w-full">
-                              Add new
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={loading}
+                            >
+                              {loading ? "Loading..." : "Update"}
                             </Button>
                           </form>
                         </Form>
