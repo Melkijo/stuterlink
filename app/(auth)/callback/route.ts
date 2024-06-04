@@ -1,11 +1,10 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { type CookieOptions, createServerClient } from '@supabase/ssr'
-import { redirect } from 'next/navigation'
 
 export async function GET(request: Request) {
-    console.log("masuk callback")
   const { searchParams, origin } = new URL(request.url)
+  console.log("ini origin",origin)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
@@ -50,24 +49,24 @@ export async function GET(request: Request) {
                     .insert({ email: user.email, username: newUsername.value });
                     if(!error){
                         cookies().delete('name')
-                        return NextResponse.redirect(`${origin}${next}${newUsername.value}`)
+                        return NextResponse.redirect(`https://stuterlink.vercel.app${next}${newUsername.value}`)
                     }
                 }
               }
             else {
                
                 if (data && data.length > 0) {
-                    return NextResponse.redirect(`${origin}${next}${data[0].username}`)
+                    return NextResponse.redirect(`https://stuterlink.vercel.app${next}${data[0].username}`)
                 }
             }
 
 
         }
 
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`https://stuterlink.vercel.app${next}`)
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`https://stuterlink.vercel.app`)
 }

@@ -44,14 +44,3 @@ export async function forgetPassword({email}: {email: string}) {
 
     return { success: true };
 }
-
-export async function signInWithGoogle() {
-    console.log("masuk");
-    const supabase = createClient();
-    supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "https://stuterlink.vercel.app/callback",
-      },
-    });
-  }

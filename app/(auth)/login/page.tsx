@@ -36,7 +36,6 @@ const formSchema = z.object({
 });
 
 async function signInWithGoogle() {
-  console.log("masuk");
   const supabase = createClient();
   supabase.auth.signInWithOAuth({
     provider: "google",
