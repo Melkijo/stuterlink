@@ -36,6 +36,7 @@ import Image from "next/image";
 import { editIcon, trashIcon } from "@/components/icons";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number(),
@@ -189,18 +190,6 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // setLoading(true);
-
-    if (image) {
-      postOtherLink(image, values);
-    } else {
-      alert("Please upload image");
-    }
-
-    setImage(undefined);
-  }
-
   useEffect(() => {
     getOtherLink(userId).then((data) => {
       if (data) {
@@ -210,26 +199,64 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
     });
   }, [onSubmit, handleDelete, handleEdit]);
 
-  function handleDelete(otherLinkId: number) {
-    deleteOtherLink(otherLinkId);
+  async function handleDelete(otherLinkId: number) {
+    try {
+      await deleteOtherLink(otherLinkId); // Assuming deleteOtherLink is an async function
+      toast("Other Link deleted", {
+        description: "The other link has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting other link:", error);
+      toast("Error", {
+        description: "There was an error deleting the other link.",
+      });
+    }
   }
-
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    if (!values.image) values.image = imageEdit;
-    if (image) {
-      editOtherLink(editId, values, image);
-    } else {
-      editOtherLink(editId, values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      if (image) {
+        await postOtherLink(image, values); // Assuming postOtherLink is an async function
+        toast("Other Link added", {
+          description: "The other link has been added successfully",
+        });
+      } else {
+        toast("Please upload image");
+      }
+    } catch (error) {
+      console.error("Error adding other link:", error);
+      toast("Error", {
+        description: "There was an error adding the other link.",
+      });
+    } finally {
+      setLoading(false);
+      setImage(undefined);
     }
   }
 
-  function defaultValue(
-    image: string,
-    title: string,
-    url: string,
-    description: string
-  ) {
-    formEdit.setValue("image", image);
+  async function handleEdit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      if (!values.image) values.image = imageEdit;
+      if (image) {
+        await editOtherLink(editId, values, image); // Assuming editOtherLink is an async function
+      } else {
+        await editOtherLink(editId, values);
+      }
+      toast("Other Link updated", {
+        description: "The other link has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating other link:", error);
+      toast("Error", {
+        description: "There was an error updating the other link.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function defaultValue(title: string, url: string, description: string) {
     formEdit.setValue("title", title);
     formEdit.setValue("url", url);
     formEdit.setValue("description", description);
@@ -248,7 +275,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-4 text-left"
                 >
                   <FormField
                     control={form.control}
@@ -365,12 +392,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
                         onClick={() => {
                           setEditId(item.id);
                           setImageEdit(item.image);
-                          defaultValue(
-                            item.image,
-                            item.title,
-                            item.url,
-                            item.description
-                          );
+                          defaultValue(item.title, item.url, item.description);
                         }}
                       >
                         {editIcon}
@@ -385,7 +407,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
                           <Form {...formEdit}>
                             <form
                               onSubmit={formEdit.handleSubmit(handleEdit)}
-                              className="space-y-4"
+                              className="space-y-4 text-left"
                             >
                               <FormField
                                 control={formEdit.control}

@@ -217,7 +217,7 @@ export default function EditCertificate({ userId }: { userId: number }) {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-4 text-left"
                 >
                   <FormField
                     control={form.control}
@@ -340,7 +340,7 @@ export default function EditCertificate({ userId }: { userId: number }) {
                         <Form {...formEdit}>
                           <form
                             onSubmit={formEdit.handleSubmit(handleEdit)}
-                            className="space-y-4"
+                            className="space-y-4 text-left"
                           >
                             <FormField
                               control={formEdit.control}

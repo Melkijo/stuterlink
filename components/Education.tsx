@@ -6,10 +6,10 @@ export default function Education({
   return (
     <div className="flex gap-4">
       <div className="flex flex-col justify-center items-center">
-        <div className="w-0.5 h-4 bg-dark "></div>
+        <div className="w-0.5 h-4 bg-gray-300 "></div>
 
-        <div className="w-4 h-4 bg-dark rounded-full"></div>
-        <div className="w-0.5 h-20 bg-dark "></div>
+        <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+        <div className="w-0.5 h-20 bg-gray-300 "></div>
       </div>
       <div>
         <h3 className="text-base font-semibold">{education.degree}</h3>

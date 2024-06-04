@@ -24,10 +24,10 @@ import {
 } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import { editIcon, linkIcon, trashIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   user_id: z.number(),
@@ -120,6 +120,7 @@ async function deleteEducation(educationId: number) {
 export default function EditEducation({ userId }: { userId: number }) {
   const [education, setEducation] = useState<any[]>([]);
   const [editId, setEditId] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getEducation(userId).then((data) => {
@@ -161,17 +162,52 @@ export default function EditEducation({ userId }: { userId: number }) {
     formEdit.setValue("end_year", end_year);
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    postEducation(values);
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await postEducation(values); // Assuming postEducation is an async function
+      toast("Education added", {
+        description: "Your education entry has been added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding education:", error);
+      toast("Error", {
+        description: "There was an error adding your education entry.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleDelete(educationId: number) {
-    deleteEducation(educationId);
+  async function handleDelete(educationId: number) {
+    try {
+      await deleteEducation(educationId); // Assuming deleteEducation is an async function
+      toast("Education deleted", {
+        description: "Your education entry has been deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting education:", error);
+      toast("Error", {
+        description: "There was an error deleting your education entry.",
+      });
+    }
   }
 
-  function handleEdit(values: z.infer<typeof formSchema>) {
-    putEducation(values, editId);
+  async function handleEdit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await putEducation(values, editId); // Assuming putEducation is an async function
+      toast("Education updated", {
+        description: "Your education entry has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating education:", error);
+      toast("Error", {
+        description: "There was an error updating your education entry.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -187,7 +223,7 @@ export default function EditEducation({ userId }: { userId: number }) {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-4 text-left"
                 >
                   <FormField
                     control={form.control}
@@ -251,8 +287,8 @@ export default function EditEducation({ userId }: { userId: number }) {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full">
-                    Add new
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Loading..." : "Add new"}
                   </Button>
                 </form>
               </Form>
@@ -262,133 +298,138 @@ export default function EditEducation({ userId }: { userId: number }) {
       </Dialog>
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div className="flex flex-col gap-2 mt-4">
-        {education.map((item, index) => (
-          <div
-            key={index}
-            className=" flex  justify-between rounded-lg  bg-white overflow-hidden"
-          >
-            <div className="py-4 ps-2">
-              <h3 className="text-base font-semibold">{item.degree}</h3>
-              <p className="text-sm">{item.school}</p>
-              <p className="text-sm">
-                {item.start_year} - {item.end_year}
-              </p>
-            </div>
+        {education.length > 0 ? (
+          education.map((item, index) => (
+            <div
+              key={index}
+              className="flex justify-between rounded-lg bg-white overflow-hidden border border-gray-200"
+            >
+              <div className="py-4 ps-2">
+                <h3 className="text-base font-semibold">{item.degree}</h3>
+                <p className="text-sm">{item.school}</p>
+                <p className="text-sm">
+                  {item.start_year} - {item.end_year}
+                </p>
+              </div>
 
-            <div className=" grid grid-cols-1  w-[60px]">
-              <Dialog>
-                <DialogTrigger className="w-full">
-                  <Button
-                    className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
-                    variant="none"
-                    size="none"
-                    onClick={() => {
-                      setEditId(item.id);
-                      defaultValues(
-                        item.school,
-                        item.degree,
-                        item.start_year,
-                        item.end_year
-                      );
-                    }}
-                  >
-                    {editIcon}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="mb-4">Education</DialogTitle>
-                    <DialogDescription>
-                      <Form {...formEdit}>
-                        <form
-                          onSubmit={formEdit.handleSubmit(handleEdit)}
-                          className="space-y-4"
-                        >
-                          <FormField
-                            control={formEdit.control}
-                            name="school"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>School / University</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="School/University"
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={formEdit.control}
-                            name="degree"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Degree</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="BSc Computer Science"
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 w-[60px]">
+                <Dialog>
+                  <DialogTrigger className="w-full">
+                    <Button
+                      className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
+                      variant="none"
+                      size="none"
+                      onClick={() => {
+                        setEditId(item.id);
+                        defaultValues(
+                          item.school,
+                          item.degree,
+                          item.start_year,
+                          item.end_year
+                        );
+                      }}
+                    >
+                      {editIcon}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="mb-4">Education</DialogTitle>
+                      <DialogDescription>
+                        <Form {...formEdit}>
+                          <form
+                            onSubmit={formEdit.handleSubmit(handleEdit)}
+                            className="space-y-4 text-left"
+                          >
                             <FormField
                               control={formEdit.control}
-                              name="start_year"
+                              name="school"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Start Year</FormLabel>
+                                  <FormLabel>School / University</FormLabel>
                                   <FormControl>
-                                    <Input {...field} placeholder="20xx" />
+                                    <Input
+                                      placeholder="School/University"
+                                      {...field}
+                                    />
                                   </FormControl>
-
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
                             <FormField
                               control={formEdit.control}
-                              name="end_year"
+                              name="degree"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>End Year</FormLabel>
+                                  <FormLabel>Degree</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="20xx" {...field} />
+                                    <Input
+                                      placeholder="BSc Computer Science"
+                                      {...field}
+                                    />
                                   </FormControl>
-
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
-                          </div>
-
-                          <Button type="submit" className="w-full">
-                            Update
-                          </Button>
-                        </form>
-                      </Form>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-              <Button
-                variant="none"
-                size="none"
-                className="bg-red-400 hover:bg-red-500  flex items-center justify-center rounded-none"
-                onClick={() => handleDelete(item.id)}
-              >
-                {trashIcon}
-              </Button>
+                            <div className="grid grid-cols-2 gap-2">
+                              <FormField
+                                control={formEdit.control}
+                                name="start_year"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Start Year</FormLabel>
+                                    <FormControl>
+                                      <Input {...field} placeholder="20xx" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={formEdit.control}
+                                name="end_year"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>End Year</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="20xx" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={loading}
+                            >
+                              {loading ? "Loading..." : "Update"}
+                            </Button>
+                          </form>
+                        </Form>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  variant="none"
+                  size="none"
+                  className="bg-red-400 hover:bg-red-500 flex items-center justify-center rounded-none"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  {trashIcon}
+                </Button>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex justify-center">
+            <small>No education available.</small>
           </div>
-        ))}
+        )}
       </div>
     </>
   );

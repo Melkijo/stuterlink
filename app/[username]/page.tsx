@@ -1,20 +1,14 @@
-import { interest, socialMedia, dummyAccount } from "@/data/data";
-import Image from "next/image";
-import Link from "next/link";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Portfolio from "@/components/Portfolio";
 import Experience from "@/components/Experience";
 import Education from "@/components/Education";
 import Certificate from "@/components/Certificate";
-import Interest from "@/components/Interest";
 import { CertificateItem, EducationItem, ExperienceItem } from "@/types/types";
-import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/server";
-import SocialMedia from "@/components/SocialMedia";
 import UsernameButton from "@/components/username/UsernameButton";
 import OtherTab from "@/components/OtherTab";
 import UserHeader from "@/components/UserHeader";
+import Link from "next/link";
 
 async function getUserDetail(username: string) {
   const supabase = createClient();
@@ -22,7 +16,6 @@ async function getUserDetail(username: string) {
     .from("user_data")
     .select("*")
     .eq("username", username);
-
   if (error) {
     console.error("Error fetching authenticated user:", error);
     return null;
@@ -135,20 +128,26 @@ export default async function Page({ params }: any) {
   } = await supabase.auth.getUser();
 
   const userDetail = await getUserDetail(params.username);
-  if (!userDetail) {
-    return <h1>No User found</h1>;
+
+  if (userDetail === null || userDetail?.length === 0) {
+    return (
+      <div className="flex flex-col gap-4 justify-center items-center h-screen">
+        <h1 className="text-2xl">User not found</h1>
+        <Link href="/">Return Home</Link>
+      </div>
+    );
   }
 
-  const userSocialMedia = await getUserSocialMedia(userDetail[0].id);
-  const userPortfolio = await getUserPortfolio(userDetail[0].id);
-  const userCertificates = await getUserCertificates(userDetail[0].id);
-  const userEducation = await getUserEducation(userDetail[0].id);
-  const userExperiences = await getUserExperiences(userDetail[0].id);
-  const userOtherLink = await getUserOtherLink(userDetail[0].id);
+  const userSocialMedia = await getUserSocialMedia(userDetail?.[0]?.id);
+  const userPortfolio = await getUserPortfolio(userDetail?.[0]?.id);
+  const userCertificates = await getUserCertificates(userDetail?.[0]?.id);
+  const userEducation = await getUserEducation(userDetail?.[0]?.id);
+  const userExperiences = await getUserExperiences(userDetail?.[0]?.id);
+  const userOtherLink = await getUserOtherLink(userDetail?.[0]?.id);
 
   //store all the data in one object
   const userData = {
-    ...userDetail[0],
+    ...userDetail?.[0],
     socialMedia: userSocialMedia,
     portfolios: userPortfolio,
     certificates: userCertificates,

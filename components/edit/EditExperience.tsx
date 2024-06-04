@@ -539,7 +539,7 @@ export default function EditExperience({ userId }: { userId: number }) {
                         <Form {...formEdit}>
                           <form
                             onSubmit={formEdit.handleSubmit(handleEdit)}
-                            className="space-y-4"
+                            className="space-y-4 text-left"
                           >
                             <FormField
                               control={formEdit.control}
