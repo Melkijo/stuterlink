@@ -19,6 +19,7 @@ import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
 import { redirect, useRouter } from "next/navigation";
+import { storeUsernameCookies } from "@/app/(auth)/actions";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -50,10 +51,19 @@ async function signup(
   return { success: true, data: newUsername };
 }
 
+async function signInWithGoogle() {
+  const supabase = createClient();
+  supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "http://localhost:3000/callback",
+    },
+  });
+}
+
 export default function SignupPopup({ link }: { link: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const username = link;
 
   // 1. Define your form.
@@ -89,7 +99,14 @@ export default function SignupPopup({ link }: { link: string }) {
           Create your account now
         </h1>
         <div className="w-full flex justify-center flex-col items-center">
-          <Button className="w-full text-md" size="lg">
+          <Button
+            className="w-full text-md"
+            size="lg"
+            onClick={() => {
+              signInWithGoogle();
+              storeUsernameCookies(username);
+            }}
+          >
             Sign up with Google
           </Button>
         </div>

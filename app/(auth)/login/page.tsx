@@ -28,12 +28,23 @@ import Link from "next/link";
 import { login, navigateUsername } from "./actions";
 import { useState } from "react";
 import { toast } from "sonner";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
+async function signInWithGoogle() {
+  console.log("masuk");
+  const supabase = createClient();
+  supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "http://localhost:3000/callback",
+    },
+  });
+}
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   // 1. Define your form.
@@ -68,7 +79,7 @@ export default function Page() {
             <Button
               className="w-full text-md "
               size="lg"
-              onClick={() => alert("currently unavailable..")}
+              onClick={() => signInWithGoogle()}
             >
               Sign in with Google
             </Button>

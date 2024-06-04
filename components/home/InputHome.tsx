@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import SignupPopup from "../SignupPopup";
+
 const checkAvailableUsername = async (
   usernameInput: string
 ): Promise<boolean | null> => {
@@ -47,6 +48,15 @@ const checkAvailableUsername = async (
     }
   }
 };
+
+async function checkUser() {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  console.log(user?.email);
+}
 
 export default function InputHome() {
   const router = useRouter();
@@ -99,6 +109,7 @@ export default function InputHome() {
       <p className="text-base md:text-lg">
         Get a professional online presence now
       </p>
+      {/* <button onClick={() => checkUser()}>Check user</button> */}
       <div className="flex w-full mt-2 items-center space-x-2">
         <Input
           type="text"

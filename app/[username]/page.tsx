@@ -183,7 +183,7 @@ export default async function Page({ params }: any) {
               {/* tabs */}
               <Tabs defaultValue="portfolio" className="w-full mt-8">
                 <TabsList>
-                  <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+                  <TabsTrigger value="portfolio">Portfolios</TabsTrigger>
                   {userExperiences && userExperiences.length > 0 ? (
                     <TabsTrigger value="experience">Experiences</TabsTrigger>
                   ) : null}
