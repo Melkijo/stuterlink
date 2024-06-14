@@ -14,18 +14,25 @@ export default function UserHeader({ userDetail }: any) {
         <>
           {/* header */}
           <div className="flex justify-between items-center">
-            <div className="w-32 h-32 overflow-hidden rounded-full">
-              <Image
-                src={
-                  user.profile_picture
-                    ? user.profile_picture
-                    : dummyAccount.profilePicture
-                }
-                alt="profile picture"
-                className="w-full h-full object-cover"
-                width={200}
-                height={200}
-              />
+            <div className="relative">
+              <div
+                className={`w-32 h-32 overflow-hidden  rounded-full ${
+                  user.open_to_work ? `border-[5px] border-green-300` : ``
+                }`}
+              >
+                <Image
+                  src={
+                    user.profile_picture
+                      ? user.profile_picture
+                      : dummyAccount.profilePicture
+                  }
+                  alt="profile picture"
+                  className="w-full h-full object-cover"
+                  width={200}
+                  height={200}
+                />
+              </div>
+              <div className="absolute rounded-full right-0 bottom-3 w-8 h-8 bg-green-300 border-4 border-white "></div>
             </div>
             <div className="flex flex-col gap-2">
               <Link
@@ -52,15 +59,6 @@ export default function UserHeader({ userDetail }: any) {
               <h1 className="text-2xl font-bold">
                 {user.name ? user.name : "No Name"}
               </h1>
-              {user.open_to_work ? (
-                <p className="text-sm font-medium bg-green-400 text-white px-4 py-2 rounded-full">
-                  Open to work
-                </p>
-              ) : (
-                <p className="text-sm font-medium bg-red-400 text-white px-4 py-2 rounded-full">
-                  Unavailable
-                </p>
-              )}
             </div>
             <div className="flex flex-wrap gap-4">
               <p>@{user.username}</p>

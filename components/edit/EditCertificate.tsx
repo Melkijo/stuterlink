@@ -1,24 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Dialog,
   DialogContent,
@@ -27,11 +19,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { interestList } from "@/data/data";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { editIcon, linkIcon, trashIcon } from "@/components/icons";
+import { editIcon, trashIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -117,9 +106,10 @@ async function deleteCertificate(certificateId: number) {
     return null;
   }
   console.log("deleted");
-  return;
 }
-export default function EditCertificate({ userId }: { userId: number }) {
+export default function EditCertificate({
+  userId,
+}: Readonly<{ userId: number }>) {
   const [certificates, setCertificates] = useState<any[]>([]);
   const [editId, setEditId] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);

@@ -45,7 +45,7 @@ export default async function AuthLayout({
     data: { user },
   } = await supabase.auth.getUser();
   if (user) {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("user_data")
       .select("username")
       .eq("email", user.email);
@@ -54,11 +54,9 @@ export default async function AuthLayout({
     }
   }
   return (
-    <html lang="en">
-      <body className={satoshi.className}>
-        <main>{children}</main>
-        <Toaster position="top-center" />
-      </body>
-    </html>
+    <>
+      <main>{children}</main>
+      <Toaster position="top-center" />
+    </>
   );
 }

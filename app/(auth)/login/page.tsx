@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -40,7 +39,7 @@ async function signInWithGoogle() {
   supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://stuterlink.vercel.app/callback",
+      redirectTo: "http://localhost:3000/callback",
     },
   });
 }

@@ -5,7 +5,6 @@ import { type CookieOptions, createServerClient } from '@supabase/ssr'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
   if (code) {
     const cookieStore = cookies()
@@ -33,7 +32,7 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             // store the user's email in a cookie
-           const {data,error} =await supabase
+           const {data} =await supabase
            .from('user_data')
            .select('username').eq('email',user.email)
 
@@ -52,18 +51,16 @@ export async function GET(request: Request) {
                     }
                 }
                 else{
-                    const { error } = await supabase.auth.signOut();
+                    await supabase.auth.signOut();
                     return NextResponse.redirect(`${origin}`)
 
                 }
               }
-            else {
-               
-                if (data && data.length > 0) {
-                    cookies().delete('name')
-                    return NextResponse.redirect(`${origin}${next}${data[0].username}`)
-                }
+              else if (data && data.length > 0) {
+                cookies().delete('name')
+                return NextResponse.redirect(`${origin}${next}${data[0].username}`)
             }
+           
 
 
         }

@@ -1,7 +1,6 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-
 import { createClient } from '@/utils/supabase/server'
 
 export async function login({userData}: {userData: {email: string, password: string}}) {
@@ -34,7 +33,7 @@ export async function navigateUsername({username}: {username: string}) {
 export async function forgetPassword({email}: {email: string}) {
     const supabase = createClient();
 
-    const { data, error } = await supabase.auth
+    const {  error } = await supabase.auth
     .resetPasswordForEmail(email)
 
     if (error) {

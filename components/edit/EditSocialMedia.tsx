@@ -3,12 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,7 +15,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -36,7 +34,7 @@ async function updateSocialMedia(
   userId: number
 ) {
   const client = createClient();
-  const { data, error } = await client
+  const { error } = await client
     .from("social_media")
     .update(values)
     .eq("user_id", userId)
@@ -45,12 +43,12 @@ async function updateSocialMedia(
     console.error(error);
     return;
   }
-  return;
+  console.log("success editing social media");
 }
 
 async function addSocialMedia(values: z.infer<typeof formSchema>, userId: any) {
   const client = createClient();
-  const { data, error } = await client.from("social_media").insert(values);
+  const { error } = await client.from("social_media").insert(values);
 
   if (error) {
     console.error(error);
@@ -64,7 +62,7 @@ interface EditSocialMediaProps {
   userId: number; // Assuming userId is a number, adjust if it's a different type
 }
 
-export default function EditSocialMedia(props: EditSocialMediaProps) {
+export default function EditSocialMedia(props: Readonly<EditSocialMediaProps>) {
   const socialMedia = props.socialMediaList;
   const [loading, setLoading] = useState(false);
 

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -28,11 +27,6 @@ const satoshi = localFont({
   ],
 });
 
-export const metadata: Metadata = {
-  title: "Stuterlink",
-  description: "Your profesional link",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,8 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={satoshi.className}>{children}</body>
-      <SpeedInsights />
+      <body className={satoshi.className}>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }

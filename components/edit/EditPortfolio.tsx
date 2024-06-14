@@ -3,12 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +16,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -52,7 +49,7 @@ async function postPortfolio(image: File, values: z.infer<typeof formSchema>) {
     const supabase = createClient();
 
     //upload image to storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("stuterlink")
       .upload(`portfolio/${image.name}`, image, {
         cacheControl: "3600",
@@ -106,7 +103,7 @@ async function getPortfolio(userId: number) {
 async function deletePortfolio(portfolioId: number) {
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("portfolios")
     .delete()
     .eq("id", portfolioId);
@@ -127,7 +124,7 @@ async function editPortfolio(
   const supabase = createClient();
 
   if (image) {
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("stuterlink")
       .upload(`portfolio/${image.name}`, image, {
         cacheControl: "3600",
@@ -148,7 +145,7 @@ async function editPortfolio(
       values.image = imageLink.publicUrl;
   }
 
-  const { data: updatedData, error: updateError } = await supabase
+  const { error: updateError } = await supabase
     .from("portfolios")
     .update(values)
     .eq("id", portfolioId);
@@ -158,7 +155,6 @@ async function editPortfolio(
     return null;
   }
   console.log("updated");
-  return;
 }
 
 interface PortfolioProps {
@@ -168,7 +164,7 @@ interface PortfolioProps {
 export default function EditPortfolio({
   portfolioList,
   userId,
-}: PortfolioProps) {
+}: Readonly<PortfolioProps>) {
   const [portfolio, setPortfolio] = useState<any[]>([]);
   const [image, setImage] = useState<File>();
   const [loading, setLoading] = useState(false);
@@ -358,25 +354,23 @@ export default function EditPortfolio({
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div className="mt-4 flex flex-col gap-2">
         {portfolio.length === 0 ? (
-          <p className="text-center">No portfolio yet</p>
+          <small className="text-center">No portfolio yet</small>
         ) : (
           <>
             {/* Portfolio list */}
             {portfolio.map((item: any, index) => (
-              <div
-                key={index}
-                className="  bg-white  flex gap-1 justify-between items-center rounded-xl overflow-hidden h-[100px] border border-gray-200"
-              >
-                <div className="w-[100px] h-full">
-                  <Image
-                    src={`${item.image}`}
-                    alt="profile picture"
-                    width={200}
-                    height={200}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div>
+              <div key={index}>
+                <div className="  bg-white  flex gap-1 justify-between items-center rounded-xl overflow-hidden h-[100px] border border-gray-200">
+                  <div className="w-[100px] h-full">
+                    <Image
+                      src={`${item.image}`}
+                      alt="profile picture"
+                      width={200}
+                      height={200}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div></div>
                   <h3 className="font-semibold text-base w-fit">
                     {item.title}
                   </h3>

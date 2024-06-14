@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import React from "react";
 import { AuroraBackground } from "../ui/aurora-background";
 
-export function HeroBackground({ children }: { children: React.ReactNode }) {
+export function HeroBackground({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <AuroraBackground>
       <motion.div

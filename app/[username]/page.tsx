@@ -9,7 +9,7 @@ import UsernameButton from "@/components/username/UsernameButton";
 import OtherTab from "@/components/OtherTab";
 import UserHeader from "@/components/UserHeader";
 import Link from "next/link";
-
+import type { Metadata, ResolvingMetadata } from "next";
 async function getUserDetail(username: string) {
   const supabase = createClient();
   const { data: account_data, error } = await supabase
@@ -119,6 +119,18 @@ async function getUserOtherLink(userId: string) {
 
   return response;
 }
+type Props = {
+  params: { username: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // read route params
+  const username = params.username;
+
+  return {
+    title: `${username} | Stuterlink`,
+  };
+}
 
 export default async function Page({ params }: any) {
   const supabase = createClient(); // Assuming you have supabase configured
@@ -158,17 +170,17 @@ export default async function Page({ params }: any) {
 
   return (
     <>
-      <div className="relative max-w-[720px] mx-auto ">
-        <div className="mx-4 ">
-          <div className="absolute h-screen">
-            {user && user.email === userData.email ? (
+      {user && user.email === userData.email ? (
+        <div className="relative max-w-[720px] mx-auto ">
+          <div className="mx-4 ">
+            <div className="absolute h-screen">
               <div className="fixed bottom-10">
                 <UsernameButton data={userData} />
               </div>
-            ) : null}
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="max-w-[480px] mx-auto ">
         <Tabs defaultValue="personal" className="w-full">

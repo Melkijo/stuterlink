@@ -3,24 +3,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Dialog,
   DialogContent,
@@ -29,7 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { interestList } from "@/data/data";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -54,7 +45,7 @@ async function postOtherLink(image: File, values: z.infer<typeof formSchema>) {
     const supabase = createClient();
 
     //upload image to storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("stuterlink")
       .upload(`otherLink/${image.name}`, image, {
         cacheControl: "3600",
@@ -108,7 +99,7 @@ async function getOtherLink(userId: number) {
 async function deleteOtherLink(otherLinkId: number) {
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("other_link")
     .delete()
     .eq("id", otherLinkId);
@@ -129,7 +120,7 @@ async function editOtherLink(
   const supabase = createClient();
 
   if (image) {
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("stuterlink")
       .upload(`otherLink/${image.name}`, image, {
         cacheControl: "3600",
@@ -160,14 +151,13 @@ async function editOtherLink(
     return null;
   }
   console.log("updated");
-  return;
 }
 
-interface otherLinkProps {
+interface OtherLinkProps {
   otherLinkList: string[];
   userId: number;
 }
-export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
+export default function EditOther({ userId }: Readonly<OtherLinkProps>) {
   const [otherLink, setOtherLink] = useState<any[]>([]);
   const [image, setImage] = useState<File>();
   const [loading, setLoading] = useState(false);
@@ -356,7 +346,7 @@ export default function EditOther({ otherLinkList, userId }: otherLinkProps) {
       <div className="mt-4 w-full h-0.5 bg-gray-400"></div>
       <div className="mt-4 flex flex-col gap-2">
         {otherLink.length === 0 ? (
-          <p className="text-center">No other link yet</p>
+          <small className="text-center">No other link yet</small>
         ) : (
           <>
             {/* otherLink list */}

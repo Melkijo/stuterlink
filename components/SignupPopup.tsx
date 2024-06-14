@@ -56,7 +56,7 @@ async function signInWithGoogle() {
   supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://stuterlink.vercel.app/callback",
+      redirectTo: "http://localhost:3000/callback",
     },
   });
 }
@@ -95,9 +95,9 @@ export default function SignupPopup({ link }: { link: string }) {
         <p className="mb-4">
           <span>stuterlink.me/{username}</span> is ready!
         </p>
-        <h1 className="text-3xl font-bold text-left mb-6">
+        <p className="text-3xl font-bold text-left mb-6">
           Create your account now
-        </h1>
+        </p>
         <div className="w-full flex justify-center flex-col items-center">
           <Button
             className="w-full text-md"
@@ -164,11 +164,15 @@ export default function SignupPopup({ link }: { link: string }) {
         </Form>
         <div className="flex justify-center mt-4">
           <p>Have an account?</p>
-          <Button variant="link" size="none">
-            <Link href="/login" className="text-blue-500 ml-1 text-md">
+          <Link href="/login">
+            <Button
+              variant="link"
+              size="none"
+              className="text-blue-500 ml-1 text-md"
+            >
               Login
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -10,9 +10,7 @@ import { usernameDisable, format } from "@/data/data";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import SignupPopup from "../SignupPopup";
@@ -49,34 +47,22 @@ const checkAvailableUsername = async (
   }
 };
 
-async function checkUser() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  console.log(user?.email);
-}
-
 export default function InputHome() {
-  const router = useRouter();
   const [link, setLink] = useState("");
-  const [buttonActive, setButtonActive] = useState<boolean>(false); // State for button disabled state (boolean type)
+  const [buttonActive, setButtonActive] = useState<boolean>(false);
   const [usernameAvailability, setUsernameAvailability] = useState<
     boolean | null
-  >(null); // State for username availability check result (boolean or null type)
+  >(null);
 
-  //its for checking username availability real time
   useEffect(() => {
     setLink(link.toLowerCase());
     const handleUsernameChange = async () => {
       if (!link) {
-        setUsernameAvailability(null); // Reset availability on empty input
-        setButtonActive(true); // Disable button if no username
+        setUsernameAvailability(null);
+        setButtonActive(true);
         return;
       }
 
-      // check if link have a symbol that is prohibited in url
       if (link.match(/[^a-zA-Z0-9-]/g)) {
         setUsernameAvailability(true);
         setButtonActive(true);
@@ -97,23 +83,15 @@ export default function InputHome() {
     return () => debouncedHandleUsernameChange.cancel(); // Cleanup on unmount
   }, [link]); // Re-run useEffect on link change
 
-  const handleLink = () => {
-    setButtonActive(true);
-    if (link === "") return;
-
-    router.push(`/signup?username=${link}`);
-    setButtonActive(false);
-  };
   return (
     <div className="mt-8">
       <p className="text-base md:text-lg">
         Get a professional online presence now
       </p>
-      {/* <button onClick={() => checkUser()}>Check user</button> */}
       <div className="flex w-full mt-2 items-center space-x-2">
         <Input
           type="text"
-          placeholder="stuterlink/"
+          placeholder="stuterlink"
           value={link}
           className="text-md h-12"
           onChange={(e) => setLink(e.target.value)}
@@ -133,21 +111,21 @@ export default function InputHome() {
             }
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <SignupPopup link={link} />
-            </DialogHeader>
+            <SignupPopup link={link} />
           </DialogContent>
         </Dialog>
       </div>
       <div className="mt-2 text-base text-gray-400">
         have an account?{" "}
-        <Button
-          variant="link"
-          size="none"
-          className="text-blue-500 ml-1 text-base"
-        >
-          <Link href="/login">Login</Link>
-        </Button>
+        <Link href="/login">
+          <Button
+            variant="link"
+            size="none"
+            className="text-blue-500 ml-1 text-base"
+          >
+            Login
+          </Button>
+        </Link>
       </div>
     </div>
   );
