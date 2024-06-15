@@ -32,7 +32,9 @@ export default function UserHeader({ userDetail }: any) {
                   height={200}
                 />
               </div>
-              <div className="absolute rounded-full right-0 bottom-3 w-8 h-8 bg-green-300 border-4 border-white "></div>
+              {user.open_to_work ? (
+                <div className="absolute rounded-full right-0 bottom-3 w-8 h-8 bg-green-300 border-4 border-white "></div>
+              ) : null}
             </div>
             <div className="flex flex-col gap-2">
               <Link
