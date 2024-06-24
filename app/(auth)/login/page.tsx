@@ -39,7 +39,7 @@ async function signInWithGoogle() {
   supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://stuterlink.vercel.app/callback",
+      redirectTo: "https://www.stuter.me/callback",
     },
   });
 }
@@ -95,9 +95,9 @@ export default function Page() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="melkijo@example.com"
+                        placeholder="email@example.com"
                         {...field}
-                        // name="email"
+                        name="email"
                         type="email"
                         required
                       />
@@ -118,12 +118,12 @@ export default function Page() {
                         type="password"
                         placeholder="****"
                         {...field}
-                        // name="password"
+                        name="password"
                         required
                       />
                     </FormControl>
 
-                    <Dialog>
+                    {/* <Dialog>
                       <div className="w-full flex justify-end">
                         <DialogTrigger asChild>
                           <Button variant="link" size="none">
@@ -156,7 +156,7 @@ export default function Page() {
                           </Button>
                         </DialogFooter>
                       </DialogContent>
-                    </Dialog>
+                    </Dialog> */}
 
                     <FormMessage />
                   </FormItem>

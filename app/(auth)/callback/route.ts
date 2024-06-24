@@ -65,7 +65,7 @@ export async function GET(request: Request) {
 
         }
 
-      return NextResponse.redirect(`https://stuterlink.vercel.app${next}`)
+      return NextResponse.redirect(`https://www.stuter.me${next}`)
     }
   }
 

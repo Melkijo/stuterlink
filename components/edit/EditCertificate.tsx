@@ -107,6 +107,7 @@ async function deleteCertificate(certificateId: number) {
   }
   console.log("deleted");
 }
+
 export default function EditCertificate({
   userId,
 }: Readonly<{ userId: number }>) {
@@ -136,6 +137,7 @@ export default function EditCertificate({
       }
     });
   }, [onSubmit, handleDelete]);
+
   function defaultValues(
     title: string,
     url: string,
@@ -147,6 +149,7 @@ export default function EditCertificate({
     formEdit.setValue("year_published", year_published);
     formEdit.setValue("published_by", published_by);
   }
+
   async function handleDelete(certificateId: number) {
     try {
       await deleteCertificate(certificateId); // Assuming deleteCertificate is an async function
