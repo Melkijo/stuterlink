@@ -360,7 +360,7 @@ export default function EditPortfolio({
             {/* Portfolio list */}
             {portfolio.map((item: any, index) => (
               <div key={index}>
-                <div className="  bg-white  flex gap-1 justify-between items-center rounded-xl overflow-hidden h-[100px] border border-gray-200">
+                <div className="  bg-white  flex justify-between items-center rounded-xl overflow-hidden h-[100px] border border-gray-200">
                   <div className="w-[100px] h-full">
                     <Image
                       src={`${item.image}`}
@@ -370,6 +370,7 @@ export default function EditPortfolio({
                       className="object-cover w-full h-full"
                     />
                   </div>
+
                   <div>
                     <h3 className="font-semibold text-base w-fit">
                       {item.title}
@@ -378,127 +379,131 @@ export default function EditPortfolio({
                       {item.description}
                     </p>
                   </div>
-                </div>
-                <div className="text-xs h-full grid grid-cols-1 w-[60px]">
-                  <Dialog>
-                    <DialogTrigger className="w-full">
-                      <Button
-                        className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
-                        variant="none"
-                        size="none"
-                        onClick={() => {
-                          setEditId(item.id);
-                          setImageEdit(item.image);
-                          defaultValues(item.title, item.url, item.description);
-                        }}
-                      >
-                        {editIcon}
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle className="mb-4">
-                          Edit portfolio {item.title}
-                        </DialogTitle>
+                  <div className="text-xs h-full grid grid-cols-1 w-[60px]">
+                    <Dialog>
+                      <DialogTrigger className="w-full">
+                        <Button
+                          className="bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center w-full h-full rounded-none"
+                          variant="none"
+                          size="none"
+                          onClick={() => {
+                            setEditId(item.id);
+                            setImageEdit(item.image);
+                            defaultValues(
+                              item.title,
+                              item.url,
+                              item.description
+                            );
+                          }}
+                        >
+                          {editIcon}
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle className="mb-4">
+                            Edit portfolio {item.title}
+                          </DialogTitle>
 
-                        <Form {...formEdit}>
-                          <form
-                            onSubmit={formEdit.handleSubmit(handleEdit)}
-                            className="space-y-4 text-left"
-                          >
-                            <FormField
-                              control={formEdit.control}
-                              name="title"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Title</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder="example project"
-                                      {...field}
-                                    />
-                                  </FormControl>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={formEdit.control}
-                              name="url"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Url</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder="https://example.com"
-                                      {...field}
-                                    />
-                                  </FormControl>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={formEdit.control}
-                              name="image"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Image</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      type="file"
-                                      {...field}
-                                      onChange={(event) => {
-                                        if (event.target.files) {
-                                          setImage(event.target.files[0]);
-                                        }
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={formEdit.control}
-                              name="description"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>description</FormLabel>
-                                  <FormControl>
-                                    <Textarea
-                                      placeholder="Make it as short as posibble"
-                                      className="resize-none"
-                                      {...field}
-                                    />
-                                  </FormControl>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <Button
-                              type="submit"
-                              className="w-full"
-                              disabled={loading}
+                          <Form {...formEdit}>
+                            <form
+                              onSubmit={formEdit.handleSubmit(handleEdit)}
+                              className="space-y-4 text-left"
                             >
-                              {loading ? "Loading..." : "Update"}
-                            </Button>
-                          </form>
-                        </Form>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
-                  <Button
-                    variant="none"
-                    size="none"
-                    className="bg-red-400 hover:bg-red-500  flex items-center justify-center rounded-none"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    {trashIcon}
-                  </Button>
+                              <FormField
+                                control={formEdit.control}
+                                name="title"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Title</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="example project"
+                                        {...field}
+                                      />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={formEdit.control}
+                                name="url"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Url</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="https://example.com"
+                                        {...field}
+                                      />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={formEdit.control}
+                                name="image"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Image</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="file"
+                                        {...field}
+                                        onChange={(event) => {
+                                          if (event.target.files) {
+                                            setImage(event.target.files[0]);
+                                          }
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={formEdit.control}
+                                name="description"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>description</FormLabel>
+                                    <FormControl>
+                                      <Textarea
+                                        placeholder="Make it as short as posibble"
+                                        className="resize-none"
+                                        {...field}
+                                      />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={loading}
+                              >
+                                {loading ? "Loading..." : "Update"}
+                              </Button>
+                            </form>
+                          </Form>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                    <Button
+                      variant="none"
+                      size="none"
+                      className="bg-red-400 hover:bg-red-500  flex items-center justify-center rounded-none"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      {trashIcon}
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
