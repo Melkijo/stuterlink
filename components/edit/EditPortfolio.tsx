@@ -370,13 +370,14 @@ export default function EditPortfolio({
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div></div>
-                  <h3 className="font-semibold text-base w-fit">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs line-clamp-1 w-[75px]">
-                    {item.description}
-                  </p>
+                  <div>
+                    <h3 className="font-semibold text-base w-fit">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs line-clamp-1 w-[75px]">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
                 <div className="text-xs h-full grid grid-cols-1 w-[60px]">
                   <Dialog>
