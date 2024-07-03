@@ -91,7 +91,7 @@ export default function InputHome() {
       <div className="flex w-full mt-2 items-center space-x-2">
         <Input
           type="text"
-          placeholder="stuterlink"
+          placeholder="stuter.me/"
           value={link}
           className="text-md h-12"
           onChange={(e) => setLink(e.target.value)}

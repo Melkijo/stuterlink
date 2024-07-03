@@ -104,7 +104,7 @@ async function updateDetail(
 
   console.log(values);
 
-  const { data: updatedData, error: updateError } = await supabase
+  const { error: updateError } = await supabase
     .from("user_data")
     .update(values)
     .eq("id", userId);
@@ -149,15 +149,6 @@ export default function EditDetail({ data }: Readonly<{ data: any }>) {
       values.resume = resumeEdit;
     }
 
-    if (image && resume) {
-      updateDetail(data.id, values, image, resume);
-    } else if (image) {
-      updateDetail(data.id, values, image);
-    } else if (resume) {
-      updateDetail(data.id, values, resume);
-    } else {
-      updateDetail(data.id, values);
-    }
     try {
       if (image && resume) {
         await updateDetail(data.id, values, image, resume);
