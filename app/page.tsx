@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Stuterlink",
+  title: "Stuter",
   description: "Your profesional link",
 };
 
